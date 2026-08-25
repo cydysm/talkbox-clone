@@ -1,10 +1,238 @@
 :root {
   color-scheme: light;
+  --background: #fdfdfd;
+  --surface: #f5f5f4;
+  --text: #333333;
+  --heading: #111111;
+  --meta: #667085;
+  --border: rgba(17, 17, 17, .14);
+  --link: #0b69a3;
+  --accent: #2bbc8a;
+  --quote: #52606d;
 }
-body { margin: 0; background: #fdfdfd; color: #333; font-family: system-ui, sans-serif; line-height: 1.7; }
-.site-header, main, footer { max-width: 46rem; margin-inline: auto; padding-inline: 1.25rem; }
-a { color: #0769d6; }
-h1, h2 { color: #111; }
-code, pre { font-family: ui-monospace, monospace; }
-pre { overflow-x: auto; padding: 1rem; background: #f3f3f3; border-radius: .35rem; }
-.comment time { display: block; margin-block: .2rem; color: #667085; font-size: .8rem; }
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-color: #cbd5e1 var(--background);
+}
+
+body {
+  margin: 0;
+  overflow-wrap: break-word;
+  background: var(--background);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.site-header,
+.post-list,
+.post,
+.comments,
+form,
+footer {
+  width: min(42rem, calc(100% - 2.5rem));
+  margin-inline: auto;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-title {
+  color: var(--heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  text-decoration: none;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--heading);
+  line-height: 1.25;
+}
+
+h1 {
+  font-size: 1.75rem;
+  margin-block: 1.5rem 1rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+}
+
+.post-list article + article {
+  margin-top: 2.5rem;
+}
+
+.post-list article p {
+  margin-block: .35rem;
+}
+
+.post time,
+.comment strong {
+  color: var(--meta);
+  font-size: .85rem;
+}
+
+.post h1::after,
+article > h2 a::after {
+  content: "";
+  display: block;
+  width: 3.5rem;
+  height: 2px;
+  margin-top: .65rem;
+  background: var(--accent);
+}
+
+blockquote {
+  margin: 1.25rem 0;
+  padding: .35rem 1rem;
+  color: var(--quote);
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 .25rem .25rem 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+:not(pre) > code {
+  padding: .12em .35em;
+  color: #b33751;
+  background: var(--surface);
+  border-radius: .2rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .92em;
+}
+
+pre {
+  overflow: auto;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: .35rem;
+  font-family: inherit;
+  font-size: .92em;
+  line-height: 1.55;
+}
+
+pre code {
+  padding: 0;
+  color: inherit;
+  background: transparent;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: .6rem .7rem;
+  margin-bottom: .75rem;
+  color: var(--text);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: .25rem;
+  font: inherit;
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+button {
+  padding: .55rem .95rem;
+  cursor: pointer;
+  color: white;
+  background: var(--accent);
+  border: 0;
+  border-radius: .25rem;
+  font: inherit;
+  font-weight: 600;
+}
+
+button:hover {
+  filter: brightness(.97);
+}
+
+.comments {
+  margin-top: 3.5rem;
+}
+
+.comment {
+  padding-left: 1rem;
+  border-left: 2px solid var(--border);
+}
+
+.comment + .comment {
+  margin-top: 1.25rem;
+}
+
+.comment time {
+  display: block;
+  margin-block: .15rem .3rem;
+  color: var(--meta);
+  font-size: .78rem;
+}
+
+.comment-replies {
+  margin-top: .85rem;
+  padding-left: 1rem;
+}
+
+form {
+  margin-block: 2.5rem;
+}
+
+footer {
+  margin-block: 3.5rem;
+  padding-top: 1rem;
+  color: var(--meta);
+  border-top: 1px solid var(--border);
+  font-size: .82rem;
+  text-align: center;
+}
+
+@media (max-width: 42rem) {
+  body {
+    font-size: .94rem;
+  }
+
+  h1 {
+    font-size: 1.55rem;
+  }
+
+  form,
+  footer,
+  main {
+    width: min(42rem, calc(100% - 1.5rem));
+  }
+}
