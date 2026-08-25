@@ -87,6 +87,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "themes" / env("THEME") / "static",
+]
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
@@ -97,6 +101,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 THEME = env("THEME")
 SITE_NAME = env("SITE_NAME")
+THEME_STATIC_DIR = f"themes/{THEME}"
 
 EMAIL_BACKEND = env(
     "EMAIL_BACKEND",

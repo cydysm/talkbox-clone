@@ -7,7 +7,7 @@
     <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
     <meta name="description" content="{% block description %}{{ SITE_NAME }} - Python blog{% endblock %}">
     {% block canonical %}{% endblock %}
-    <link rel="stylesheet" href="{% static 'themes/cactus_light/css/main.css' %}">
+    <link rel="stylesheet" href="/static/{{ THEME_STATIC_DIR }}/css/main.css">
   </head>
   <body>
     <header class="site-header">
@@ -15,6 +15,6 @@
       <nav><a href="/admin/">Admin</a></nav>
     </header>
     <main>{% block content %}{% endblock %}</main>
-    <footer>Powered by Talkbox · Cactus Dark</footer>
+    <footer>Powered by {{ SITE_NAME }}</footer>
   </body>
 </html>
