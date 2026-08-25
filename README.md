@@ -1,6 +1,6 @@
 # Talkbox Clone
 
-一个基于 Python 3、Django、PostgreSQL、Redis、Docker、Gunicorn 和 Gevent 的轻量博客系统。当前版本提供可运行的 MVP 骨架，后续可继续扩展 Emlog 导入、插件系统和更多主题。
+一个基于 Python 3、Django、PostgreSQL、Redis、Docker、Gunicorn 和 Gevent 的轻量博客系统。当前版本提供可运行的 MVP 骨架，后续可继续扩展其他博客导入、插件系统和更多主题。
 
 ## 功能
 
@@ -10,6 +10,8 @@
 - 树形评论模型和评论审核状态
 - 图片上传与缩略图生成
 - Cactus Dark 主题模板
+- Emlog JSON/SQLite 导入：文章、分类、标签和评论树
+- Emlog 旧链接 301 重定向
 - 浏览量统计、站点地图和安全响应基线
 - Docker Compose 一键启动 PostgreSQL、Redis 和 Web
 - Miniconda 管理本地 Python 环境
@@ -24,6 +26,17 @@ python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
+
+### 导入 Emlog 数据
+
+支持官方表结构的 SQLite 文件，或包含 `posts`、`categories`、`tags`、`comments` 四个数组的 JSON：
+
+```bash
+python manage.py import_emlog /path/to/emlog.sqlite3 --author-id 1
+python manage.py import_emlog /path/to/emlog-export.json --author-id 1
+```
+
+导入会保留浏览量、发布时间、标签和评论父子结构，并记录 `/post-{id}.html` 等旧地址。
 
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 
@@ -40,4 +53,4 @@ docker compose exec web python manage.py createsuperuser
 
 ## 当前范围
 
-已实现博客核心链路。Emlog 数据迁移、老链接兼容、邮件通知、水印、多模板切换、其他博客导入和完整插件机制仍属于后续阶段，需要按旧站数据结构逐步实现。
+已实现博客核心链路。邮件通知、多模板切换、其他博客导入和完整插件机制仍属于后续阶段。

@@ -1,0 +1,54 @@
+{
+  "posts": [
+    {
+      "gid": 1,
+      "title": "Emlog 第一篇",
+      "content": "# 迁移成功\n\n保留旧评论。",
+      "excerpt": "迁移示例",
+      "alias": "emlog-first",
+      "sortid": 1,
+      "views": 37,
+      "type": "blog",
+      "hide": "n",
+      "date": 1756000000,
+      "tags": "Python,迁移"
+    },
+    {
+      "id": 2,
+      "title": "草稿文章",
+      "content": "尚未发布",
+      "sortid": -1,
+      "hide": "y",
+      "date": 1756086400
+    }
+  ],
+  "categories": [
+    {"sid": 1, "sortname": "技术", "alias": "tech", "taxis": 1}
+  ],
+  "tags": [
+    {"tid": 1, "tagname": "Python", "gid": "1"},
+    {"tid": 2, "tagname": "迁移", "gid": "1"}
+  ],
+  "comments": [
+    {
+      "cid": 10,
+      "gid": 1,
+      "pid": 0,
+      "poster": "老访客",
+      "mail": "visitor@example.com",
+      "comment": "旧评论内容",
+      "date": 1756001000,
+      "hide": "n"
+    },
+    {
+      "cid": 11,
+      "gid": 1,
+      "pid": 10,
+      "poster": "站长",
+      "mail": "owner@example.com",
+      "comment": "回复旧评论",
+      "date": 1756002000,
+      "hide": "n"
+    }
+  ]
+}

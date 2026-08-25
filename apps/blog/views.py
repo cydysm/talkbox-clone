@@ -1,7 +1,8 @@
 import markdown
 from django.core.cache import cache
 from django.db.models import F
-from django.shortcuts import get_object_or_404, render
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Post
 
@@ -30,3 +31,35 @@ def post_detail(request, slug):
         "blog/post_detail.html",
         {"post": post, "content_html": rendered_content, "comments": comments},
     )
+
+
+def legacy_post_redirect(request, legacy_id):
+    legacy_paths = (
+        f"/post-{legacy_id}.html",
+        f"/{legacy_id}.html",
+        f"/post/{legacy_id}",
+        f"/{legacy_id}",
+    )
+    post = Post.objects.filter(status="published").filter(
+        legacy_url__in=legacy_paths
+    ).first()
+    if post is None:
+        posts = [item for item in Post.objects.filter(status="published") if item.legacy_id == legacy_id]
+        post = posts[0] if posts else None
+    if post is None:
+        raise Http404("旧文章不存在")
+    return redirect(post, permanent=True)
+
+
+def legacy_query_redirect(request):
+    raw_id = request.GET.get("post", "")
+    if not raw_id.isdigit():
+        raise Http404("旧文章不存在")
+    return legacy_post_redirect(request, int(raw_id))
+
+
+def legacy_alias_redirect(request, legacy_alias):
+    post = Post.objects.filter(status="published", slug=legacy_alias).first()
+    if post is None:
+        raise Http404("旧文章不存在")
+    return redirect(post, permanent=True)

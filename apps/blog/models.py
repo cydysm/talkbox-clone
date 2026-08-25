@@ -16,6 +16,13 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    @property
+    def legacy_id(self) -> int | None:
+        if self.slug.startswith("emlog-"):
+            suffix = self.slug.removeprefix("emlog-")
+            return int(suffix) if suffix.isdigit() else None
+        return None
+
 
 class Post(models.Model):
     STATUS_CHOICES = [
@@ -64,3 +71,15 @@ class Post(models.Model):
 
     def get_absolute_url(self) -> str:
         return reverse("blog:post-detail", args=[self.slug])
+
+    @property
+    def legacy_id(self) -> int | None:
+        if self.legacy_url.startswith("/post-") or self.slug.startswith("emlog-post-"):
+            suffix = self.slug.removeprefix("emlog-post-")
+            if suffix.isdigit():
+                return int(suffix)
+        if self.legacy_url.startswith("/post-"):
+            suffix = self.legacy_url[6:].removesuffix(".html")
+            if suffix.isdigit():
+                return int(suffix)
+        return None
