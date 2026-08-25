@@ -103,3 +103,5 @@ EMAIL_BACKEND = env(
     default="django.core.mail.backends.console.EmailBackend",
 )
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@example.com")
+WATERMARK_TEXT = env("WATERMARK_TEXT", default="")
+WATERMARK_IMAGE_PATH = env("WATERMARK_IMAGE_PATH", default="")

@@ -1,0 +1,11 @@
+<article class="comment">
+  <strong>{{ node.comment.guest_name }}</strong>
+  <p>{{ node.comment.body }}</p>
+  {% if node.replies %}
+    <div class="comment-replies">
+      {% for reply in node.replies %}
+        {% include "blog/includes/comment.html" with node=reply %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</article>
