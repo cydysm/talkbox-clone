@@ -10,7 +10,6 @@ from apps.blog.views import legacy_query_redirect
 sitemaps = {"posts": PostSitemap}
 
 urlpatterns = [
-    path("", legacy_query_redirect),
     path("", include("apps.blog.urls")),
     path("comments/", include("apps.comments.urls")),
     path("media-api/", include("apps.mediafiles.urls")),

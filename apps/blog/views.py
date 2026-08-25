@@ -1,13 +1,17 @@
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect, render
+
 import markdown
 from django.core.cache import cache
 from django.db.models import F
-from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Post
 
 
-def post_list(request):
+def post_list_or_legacy_redirect(request):
+    legacy_post_id = request.GET.get("post", "")
+    if legacy_post_id:
+        return legacy_query_redirect(request)
     posts = (
         Post.objects.filter(status="published")
         .select_related("author", "category")
