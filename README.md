@@ -11,6 +11,7 @@
 - 评论与回复邮件提醒
 - 图片上传与缩略图生成
 - Cactus Dark 主题模板
+- 后台多模板切换，当前支持 Cactus Dark 和 Cactus Light
 - Emlog JSON/SQLite 导入：文章、分类、标签和评论树
 - Emlog 旧链接 301 重定向
 - 浏览量统计、站点地图和安全响应基线
@@ -57,6 +58,10 @@ COMMENT_REPLY_NOTIFY=true
 
 默认控制台后端会把邮件输出到日志，便于本地验证。`NOTIFY_EMAIL` 接收新评论提醒；留空时发送给文章作者。回复通知发给被回复的访客邮箱。
 
+### 切换主题
+
+进入 Django Admin 的 **Theme settings**，把目标主题设为启用；同一时间只会有一个主题生效。默认主题由 `.env` 中的 `THEME=cactus_dark` 控制。
+
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 
 ## Docker 部署
@@ -72,4 +77,4 @@ docker compose exec web python manage.py createsuperuser
 
 ## 当前范围
 
-已实现博客核心链路。多模板切换、其他博客导入和完整插件机制仍属于后续阶段。
+已实现博客核心链路。其他博客导入和完整插件机制仍属于后续阶段。

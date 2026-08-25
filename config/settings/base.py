@@ -58,9 +58,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "themes" / env("THEME") / "templates", BASE_DIR / "templates"],
-        "APP_DIRS": True,
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": False,
         "OPTIONS": {
+            "loaders": [
+                (
+                    "apps.blog.theme_loader.ActiveThemeCachedLoader",
+                    [
+                        "apps.blog.theme_loader.ActiveThemeFilesystemLoader",
+                        "django.template.loaders.app_directories.Loader",
+                    ],
+                )
+            ],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -87,8 +96,13 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+AVAILABLE_THEMES = [
+    "cactus_dark",
+    "cactus_light",
+]
 STATICFILES_DIRS = [
-    BASE_DIR / "themes" / env("THEME") / "static",
+    BASE_DIR / "themes" / theme_name / "static"
+    for theme_name in AVAILABLE_THEMES
 ]
 
 STORAGES = {
@@ -101,7 +115,6 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 THEME = env("THEME")
 SITE_NAME = env("SITE_NAME")
-THEME_STATIC_DIR = f"themes/{THEME}"
 
 EMAIL_BACKEND = env(
     "EMAIL_BACKEND",

@@ -24,6 +24,44 @@ class Category(models.Model):
         return None
 
 
+class ThemeSetting(models.Model):
+    name = models.SlugField("主题标识", max_length=80, unique=True)
+    is_active = models.BooleanField("当前启用", default=False)
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "主题设置"
+        verbose_name_plural = verbose_name
+
+    def __str__(self) -> str:
+        return f"{self.name}{'（启用）' if self.is_active else ''}"
+
+    def save(self, *args, **kwargs):
+        if self.is_active:
+            ThemeSetting.objects.exclude(pk=self.pk).update(is_active=False)
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def active_name(cls) -> str:
+        default = getattr(settings, "THEME", "cactus_dark")
+        active = cls.objects.filter(is_active=True).values_list("name", flat=True).first()
+        return active or default
+
+    @classmethod
+    def set_active(cls, name: str):
+        available = getattr(settings, "AVAILABLE_THEMES", [default_theme()])
+        if name not in available:
+            raise ValueError(f"未知主题：{name}")
+        setting, _ = cls.objects.get_or_create(name=name, defaults={"is_active": False})
+        setting.is_active = True
+        setting.save(update_fields=["is_active", "updated_at"])
+        return setting
+
+
+def default_theme() -> str:
+    return ThemeSetting.active_name()
+
+
 class Post(models.Model):
     STATUS_CHOICES = [
         ("draft", "草稿"),

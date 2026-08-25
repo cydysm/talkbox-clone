@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Post
+from .models import Category, Post, ThemeSetting
 
 
 @admin.register(Category)
@@ -15,3 +15,9 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ["status", "category", "tags"]
     search_fields = ["title", "content_markdown", "legacy_url"]
     prepopulated_fields = {"slug": ["title"]}
+
+
+@admin.register(ThemeSetting)
+class ThemeSettingAdmin(admin.ModelAdmin):
+    list_display = ["name", "is_active", "updated_at"]
+    list_editable = ["is_active"]
