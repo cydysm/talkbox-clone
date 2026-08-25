@@ -10,6 +10,7 @@
 - 树形评论模型和评论审核状态
 - 评论与回复邮件提醒
 - 图片上传与缩略图生成
+- 图片上传安全校验：真实格式、大小、数量和尺寸限制
 - Cactus Dark 主题模板
 - 后台多模板切换，当前支持 Cactus Dark 和 Cactus Light
 - Emlog JSON/SQLite 导入：文章、分类、标签和评论树
@@ -61,6 +62,18 @@ COMMENT_REPLY_NOTIFY=true
 ### 切换主题
 
 进入 Django Admin 的 **Theme settings**，把目标主题设为启用；同一时间只会有一个主题生效。默认主题由 `.env` 中的 `THEME=cactus_dark` 控制。
+
+### 图片上传限制
+
+上传接口仅允许登录后台用户调用，并使用 Pillow 校验图片内容，而不是只信任扩展名或 MIME。默认限制可在 `.env` 调整：
+
+```dotenv
+UPLOAD_MAX_MB=10
+UPLOAD_MAX_IMAGES=20
+IMAGE_MAX_DIMENSION=8000
+```
+
+当前支持 JPEG、PNG、WebP 和 GIF。
 
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 
