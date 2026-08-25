@@ -9,7 +9,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "insecure-change-me"),
     ALLOWED_HOSTS=(list, []),
-    DATABASE_URL=(str, "postgres://talkbox:talkbox@localhost:5432/talkbox"),
+    DATABASE_URL=(str, "sqlite:///local.sqlite3"),
     REDIS_URL=(str, "redis://localhost:6379/0"),
     THEME=(str, "cactus_dark"),
     SITE_NAME=(str, "Talkbox"),
@@ -72,9 +72,7 @@ TEMPLATES = [
     }
 ]
 
-DATABASES = {
-    "default": env.db_url("DATABASE_URL", engine="django.db.backends.postgresql"),
-}
+DATABASES = {"default": env.db_url("DATABASE_URL")}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
