@@ -7,3 +7,4 @@ a { color: #0769d6; }
 h1, h2 { color: #111; }
 code, pre { font-family: ui-monospace, monospace; }
 pre { overflow-x: auto; padding: 1rem; background: #f3f3f3; border-radius: .35rem; }
+.comment time { display: block; margin-block: .2rem; color: #667085; font-size: .8rem; }

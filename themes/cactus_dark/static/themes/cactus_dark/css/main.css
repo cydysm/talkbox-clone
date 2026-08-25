@@ -86,6 +86,12 @@ h2 {
   color: var(--meta);
 }
 
+.comment time {
+  display: block;
+  color: var(--meta);
+  font-size: .74rem;
+}
+
 .post h1::after,
 article > h2 a::after {
   content: "";
