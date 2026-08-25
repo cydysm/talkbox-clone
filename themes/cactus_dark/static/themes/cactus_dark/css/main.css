@@ -169,6 +169,12 @@ button {
   padding-left: 1rem;
 }
 
+.plugin-footnote {
+  margin-top: 1.25rem;
+  color: var(--meta);
+  font-size: .78rem;
+}
+
 .site-footer,
 footer {
   margin-block: 3.5rem;

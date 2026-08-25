@@ -11,6 +11,7 @@
 - 评论与回复邮件提醒
 - 图片上传与缩略图生成
 - 图片上传安全校验：真实格式、大小、数量和尺寸限制
+- 轻量插件机制与 Markdown/HTML 内容钩子
 - Cactus Dark 主题模板
 - 后台多模板切换，当前支持 Cactus Dark 和 Cactus Light
 - Emlog JSON/SQLite 导入：文章、分类、标签和评论树
@@ -75,6 +76,15 @@ IMAGE_MAX_DIMENSION=8000
 
 当前支持 JPEG、PNG、WebP 和 GIF。
 
+### 插件机制
+
+每个插件放在 `plugins/<plugin-name>/`，必须包含：
+
+- `plugin.json`：声明 `name`、`version` 和 `description`
+- 可选 `plugin.py`：定义 `transform_markdown` 或 `transform_html` 钩子
+
+在 Django Admin 的 **Plugin settings** 中启用插件。仓库内置 `Markdown Footnote` 示例，会把文章 HTML 中的 `[FOOTNOTE]` 替换为页脚说明。
+
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 
 ## Docker 部署
@@ -90,4 +100,4 @@ docker compose exec web python manage.py createsuperuser
 
 ## 当前范围
 
-已实现博客核心链路。其他博客导入和完整插件机制仍属于后续阶段。
+已实现博客核心链路。其他博客导入和插件依赖隔离仍属于后续阶段。

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Post, ThemeSetting
+from .models import Category, PluginSetting, Post, ThemeSetting
 
 
 @admin.register(Category)
@@ -21,3 +21,9 @@ class PostAdmin(admin.ModelAdmin):
 class ThemeSettingAdmin(admin.ModelAdmin):
     list_display = ["name", "is_active", "updated_at"]
     list_editable = ["is_active"]
+
+
+@admin.register(PluginSetting)
+class PluginSettingAdmin(admin.ModelAdmin):
+    list_display = ["name", "is_enabled", "updated_at"]
+    list_editable = ["is_enabled"]

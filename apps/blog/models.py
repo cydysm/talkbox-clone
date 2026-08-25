@@ -58,6 +58,19 @@ class ThemeSetting(models.Model):
         return setting
 
 
+class PluginSetting(models.Model):
+    name = models.SlugField("插件标识", max_length=100, unique=True)
+    is_enabled = models.BooleanField("已启用", default=False)
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "插件设置"
+        verbose_name_plural = verbose_name
+
+    def __str__(self) -> str:
+        return f"{self.name}{'（启用）' if self.is_enabled else ''}"
+
+
 def default_theme() -> str:
     return ThemeSetting.active_name()
 

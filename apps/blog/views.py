@@ -6,6 +6,7 @@ from django.core.cache import cache
 from django.db.models import F
 
 from .models import Post
+from apps.plugins.registry import registry
 
 
 def post_list_or_legacy_redirect(request):
@@ -28,6 +29,7 @@ def post_detail(request, slug):
     rendered_content = cache.get(cache_key)
     if rendered_content is None:
         rendered_content = markdown.markdown(post.content_markdown, extensions=["extra", "codehilite"])
+        rendered_content = registry.apply_hook("transform_html", rendered_content)
         cache.set(cache_key, rendered_content, 3600)
     comments = post.comments.filter(is_approved=True).select_related("parent", "user")
     return render(

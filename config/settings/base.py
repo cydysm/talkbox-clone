@@ -114,6 +114,12 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 THEME = env("THEME")
+PLUGIN_DIRS = [BASE_DIR / "plugins"]
+import sys
+
+for _plugin_dir in PLUGIN_DIRS:
+    if str(_plugin_dir) not in sys.path:
+        sys.path.insert(0, str(_plugin_dir))
 SITE_NAME = env("SITE_NAME")
 
 EMAIL_BACKEND = env(

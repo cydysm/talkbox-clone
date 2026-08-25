@@ -1,0 +1,5 @@
+{
+  "name": "Markdown Footnote",
+  "version": "1.0.0",
+  "description": "将 Markdown 中的 [FOOTNOTE] 标记转换为页脚说明。"
+}
