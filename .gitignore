@@ -1,0 +1,11 @@
+.env
+.DS_Store
+__pycache__/
+*.py[cod]
+media/*
+!media/.gitkeep
+staticfiles/
+*.sqlite3
+.pytest_cache/
+.ruff_cache/
+*.log

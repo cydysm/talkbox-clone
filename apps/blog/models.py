@@ -1,0 +1,66 @@
+from django.conf import settings
+from django.db import models
+from django.urls import reverse
+from taggit.managers import TaggableManager
+
+
+class Category(models.Model):
+    name = models.CharField("分类", max_length=80, unique=True)
+    slug = models.SlugField("别名", max_length=100, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "分类"
+        verbose_name_plural = verbose_name
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class Post(models.Model):
+    STATUS_CHOICES = [
+        ("draft", "草稿"),
+        ("published", "已发布"),
+    ]
+
+    title = models.CharField("标题", max_length=200)
+    slug = models.SlugField("别名", max_length=220, unique=True)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="posts",
+        verbose_name="作者",
+    )
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="posts",
+        verbose_name="分类",
+    )
+    tags = TaggableManager(blank=True)
+    excerpt = models.TextField("摘要", blank=True)
+    content_markdown = models.TextField("Markdown 内容")
+    status = models.CharField("状态", max_length=10, choices=STATUS_CHOICES, default="draft")
+    views = models.PositiveIntegerField("浏览量", default=0)
+    legacy_url = models.CharField(
+        "Emlog 原链接",
+        max_length=500,
+        blank=True,
+        db_index=True,
+        help_text="例如 /post/123 或 /?post=123",
+    )
+    published_at = models.DateTimeField("发布时间", null=True, blank=True)
+    created_at = models.DateTimeField("创建时间", auto_now_add=True)
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        ordering = ["-published_at", "-created_at"]
+        indexes = [models.Index(fields=["status", "-published_at"])]
+
+    def __str__(self) -> str:
+        return self.title
+
+    def get_absolute_url(self) -> str:
+        return reverse("blog:post-detail", args=[self.slug])

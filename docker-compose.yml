@@ -1,0 +1,56 @@
+name: talkbox-clone
+
+services:
+  db:
+    image: postgres:18.1-alpine3.22
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-talkbox}
+      POSTGRES_USER: ${POSTGRES_USER:-talkbox}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8.4-alpine3.22
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DATABASE_URL: postgres://${POSTGRES_USER:-talkbox}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-talkbox}
+      REDIS_URL: redis://redis:6379/0
+      GUNICORN_WORKERS: ${GUNICORN_WORKERS:-2}
+    ports:
+      - "${HTTP_PORT:-8000}:8000"
+    volumes:
+      - media-data:/app/media
+      - static-data:/app/staticfiles
+
+volumes:
+  postgres-data:
+  redis-data:
+  media-data:
+  static-data:
