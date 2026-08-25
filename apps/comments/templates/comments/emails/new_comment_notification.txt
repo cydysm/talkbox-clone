@@ -1,0 +1,6 @@
+{{ comment.guest_name }} 在「{{ comment.post.title }}」发表了新评论：
+
+{{ comment.body }}
+
+如需审核或回复，请打开：
+{{ site_name }}{{ post_url }}

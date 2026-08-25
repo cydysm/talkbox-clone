@@ -1,0 +1,6 @@
+{{ comment.parent.guest_name }}，你在「{{ comment.post.title }}」的评论收到了新回复：
+
+{{ comment.body }}
+
+请打开查看完整讨论：
+{{ site_name }}{{ post_url }}

@@ -1,7 +1,8 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.views.decorators.http import require_POST
+
+from .notifications import send_comment_notification
 
 from .forms import CommentForm
 
@@ -18,7 +19,8 @@ def create_comment(request):
             comment.user = request.user
             comment.is_approved = True
         comment.save()
-        messages.success(request, "评论已提交。" if comment.is_approved else "评论已提交，等待审核。")
+        send_comment_notification(comment)
+        messages.success(request, "评论已发布。" if comment.is_approved else "评论已提交，等待审核。")
     else:
         messages.error(request, "评论提交失败，请检查表单。")
     return HttpResponseRedirect(next_url)
