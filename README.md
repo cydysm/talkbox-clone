@@ -1,6 +1,6 @@
 # Talkbox Clone
 
-一个基于 Python 3、Django、PostgreSQL、Redis、Docker、Gunicorn 和 Gevent 的轻量博客系统。当前版本提供可运行的 MVP 骨架，后续可继续扩展其他博客导入、插件系统和更多主题。
+一个基于 Python 3、Django、PostgreSQL、Redis、Docker、Gunicorn 和 Gevent 的轻量博客系统。支持 Markdown 写作、多主题切换、Emlog/通用格式数据导入、插件机制和一键升级。
 
 ## 功能
 
@@ -187,6 +187,6 @@ docker compose exec web python manage.py createsuperuser
 
 建议在低峰期运行。首次使用前先确认服务器已安装 `git`、`curl` 和 Docker，且项目目录是可快进的 Git 工作区。
 
-## 当前范围
+## 当前状态
 
-所有核心功能、通用导入器、插件依赖隔离和一键升级/恢复流程已完成。
+所有核心功能已完成：博客内容管理、评论树、媒体上传与水印、多主题切换（含访客偏好）、通用导入器、插件依赖隔离、登录限速、异步邮件通知、一键升级/恢复、CI 构建验证与依赖安全审计。

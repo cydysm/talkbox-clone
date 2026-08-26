@@ -27,3 +27,55 @@
   width: 160px;
   margin-left: 8px;
 }
+.talkbox-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.talkbox-stats .stat-card {
+  background: var(--darkened-bg, #f8f8f8);
+  border: 1px solid var(--hairline-color, #e0e0e0);
+  border-radius: 6px;
+  padding: 16px;
+  text-align: center;
+}
+
+.talkbox-stats .stat-number {
+  display: block;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.talkbox-stats .stat-label {
+  display: block;
+}
+
+.talkbox-stats .stat-sub {
+  display: block;
+  font-size: 0.85em;
+}
+.talkbox-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.talkbox-stats .stat-card {
+  background: var(--darkened-bg, #f8f8f8);
+  border: 1px solid var(--hairline-color, #e0e0e0);
+  border-radius: 6px;
+  padding: 16px;
+  text-align: center;
+}
+.talkbox-stats .stat-number {
+  display: block;
+  font-size: 2em;
+  font-weight: bold;
+}
+.talkbox-stats .stat-label { display: block; }
+.talkbox-stats .stat-sub {
+  display: block;
+  font-size: 0.85em;
+}

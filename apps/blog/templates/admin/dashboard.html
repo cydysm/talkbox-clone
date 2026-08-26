@@ -1,0 +1,35 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+<div class="talkbox-stats">
+  <div class="stat-card">
+    <span class="stat-number">{{ total_posts }}</span>
+    <span class="stat-label">文章总数</span>
+    <span class="stat-sub">{{ published_posts }} 已发布 / {{ draft_posts }} 草稿</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{{ total_views }}</span>
+    <span class="stat-label">总浏览量</span>
+    <span class="stat-sub">本周新增 {{ posts_this_week }} 篇</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{{ total_comments }}</span>
+    <span class="stat-label">评论总数</span>
+    <span class="stat-sub">{{ pending_comments }} 条待审核</span>
+  </div>
+</div>
+
+{% if recent_comments %}
+<h3>最新待审核评论</h3>
+<ul class="talkbox-recent-comments">
+  {% for comment in recent_comments %}
+  <li>
+    <strong>{{ comment.guest_name }}</strong> 评论了
+    <a href="{% url 'admin:blog_post_change' comment.post_id %}">{{ comment.post.title|truncatechars:30 }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}

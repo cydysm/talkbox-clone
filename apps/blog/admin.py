@@ -1,6 +1,40 @@
 from django.contrib import admin
+from django.db.models import Sum
+from django.utils import timezone
+
+from apps.comments.models import Comment
 
 from .models import Category, PluginSetting, Post, ThemeSetting
+
+admin.site.site_header = "Talkbox 管理后台"
+admin.site.site_title = "Talkbox"
+admin.site.index_title = "站点概览"
+
+
+_original_index = admin.site.index
+
+
+def dashboard_index(request, extra_context=None):
+    week_ago = timezone.now() - timezone.timedelta(days=7)
+    stats = {
+        "total_posts": Post.objects.count(),
+        "published_posts": Post.objects.filter(status="published").count(),
+        "draft_posts": Post.objects.filter(status="draft").count(),
+        "total_views": Post.objects.aggregate(total=Sum("views"))["total"] or 0,
+        "total_comments": Comment.objects.count(),
+        "pending_comments": Comment.objects.filter(is_approved=False).count(),
+        "recent_comments": (
+            Comment.objects.filter(is_approved=False)
+            .select_related("post")
+            .order_by("-created_at")[:5]
+        ),
+        "posts_this_week": Post.objects.filter(created_at__gte=week_ago).count(),
+    }
+    return _original_index(request, extra_context={**(extra_context or {}), **stats})
+
+
+admin.site.index = dashboard_index
+admin.site.index_template = "admin/dashboard.html"
 
 
 @admin.register(Category)
@@ -26,8 +60,6 @@ class PostAdmin(admin.ModelAdmin):
     @admin.action(description="发布所选文章")
     def publish_posts(self, request, queryset):
         updated = 0
-        from django.utils import timezone
-
         for post in queryset:
             if post.status != "published":
                 post.status = "published"
@@ -40,7 +72,7 @@ class PostAdmin(admin.ModelAdmin):
     @admin.action(description="转为草稿")
     def unpublish_posts(self, request, queryset):
         updated = queryset.exclude(status="draft").update(status="draft")
-        self.message_user(request, f"已将 {updated} 篇文章转为草稿。")
+        self.message_user(request, f"已将 {updated} 篇转为草稿。")
 
 
 @admin.register(ThemeSetting)
