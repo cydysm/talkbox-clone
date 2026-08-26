@@ -8,6 +8,8 @@
     <meta name="description" content="{% block description %}{{ SITE_NAME }} - Python blog{% endblock %}">
     {% block canonical %}{% endblock %}
     <link rel="stylesheet" href="/static/themes/{{ THEME_NAME }}/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="{{ SITE_NAME }} RSS" href="{% url 'rss' %}">
+    <link rel="alternate" type="application/atom+xml" title="{{ SITE_NAME }} Atom" href="{% url 'atom' %}">
   </head>
   <body>
     <header class="site-header">
