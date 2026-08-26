@@ -134,3 +134,8 @@ class Post(models.Model):
             if suffix.isdigit():
                 return int(suffix)
         return None
+
+    def is_accessible_by(self, user) -> bool:
+        return self.status == "published" or (
+            user.is_authenticated and (user.is_staff or user == self.author)
+        )

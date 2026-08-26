@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -83,6 +84,8 @@ def search_posts(request):
 
 def post_detail(request, slug):
     post = get_object_or_404(Post.objects.select_related("author", "category"), slug=slug)
+    if not post.is_accessible_by(request.user):
+        raise Http404("文章不存在")
     if request.method == "GET":
         Post.objects.filter(pk=post.pk).update(views=F("views") + 1)
     cache_key = f"blog:html:{post.pk}:{post.updated_at.timestamp():.0f}"
