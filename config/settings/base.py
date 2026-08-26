@@ -137,6 +137,7 @@ EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@example.com")
 NOTIFY_EMAIL = env("NOTIFY_EMAIL", default="")
 COMMENT_REPLY_NOTIFY = env.bool("COMMENT_REPLY_NOTIFY", default=True)
+COMMENT_INTERVAL_SECONDS = env.int("COMMENT_INTERVAL_SECONDS", default=30)
 WATERMARK_TEXT = env("WATERMARK_TEXT", default="")
 WATERMARK_IMAGE_PATH = env("WATERMARK_IMAGE_PATH", default="")
 UPLOAD_MAX_BYTES = env.int("UPLOAD_MAX_MB", default=10) * 1024 * 1024

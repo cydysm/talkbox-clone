@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 
@@ -9,16 +11,27 @@ from .forms import CommentForm
 
 @require_POST
 def create_comment(request):
+    client_ip = request.META.get("REMOTE_ADDR") or "unknown"
+    rate_key = f"comment-rate:{client_ip}"
+    if cache.get(rate_key):
+        messages.error(request, "提交过于频繁，请稍后再试。")
+        return HttpResponseRedirect(request.POST.get("next", "/"))
+
     form = CommentForm(request.POST)
     next_url = request.POST.get("next", "/")
     if form.is_valid():
         comment = form.save(commit=False)
         comment.post = form.cleaned_data["post"]
-        comment.ip_address = request.META.get("REMOTE_ADDR")
+        comment.ip_address = client_ip
         if request.user.is_authenticated:
             comment.user = request.user
             comment.is_approved = True
         comment.save()
+        cache.set(
+            rate_key,
+            True,
+            getattr(settings, "COMMENT_INTERVAL_SECONDS", 30),
+        )
         send_comment_notification(comment)
         messages.success(request, "评论已发布。" if comment.is_approved else "评论已提交，等待审核。")
     else:

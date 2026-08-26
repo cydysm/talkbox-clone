@@ -190,6 +190,14 @@ button {
   margin-top: 2.5rem;
 }
 
+.honeypot {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
 .plugin-footnote {
   margin-top: 1.25rem;
   color: var(--meta);

@@ -14,6 +14,7 @@
 - 轻量插件机制与 Markdown/HTML 内容钩子
 - 后台评论审核、媒体库管理和文章批量发布/草稿操作
 - 作者与后台用户可预览草稿，访客不可访问
+- 评论蜜罐防护和 IP 提交间隔限制
 - Cactus Dark 主题模板
 - 分类页、标签页和站内搜索
 - 文章列表统一分页，每页数量可配置
@@ -108,6 +109,10 @@ IMAGE_MAX_DIMENSION=8000
 - `/atom.xml`：Atom 1.0
 
 订阅源只输出已发布文章，默认最多 20 篇；可通过 `.env` 的 `FEED_LIMIT` 调整。
+
+### 评论防刷
+
+评论表单包含对普通用户隐藏的蜜罐字段。同一 IP 默认每 `COMMENT_INTERVAL_SECONDS=30` 秒只能提交一次，可在 `.env` 调整。
 
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 

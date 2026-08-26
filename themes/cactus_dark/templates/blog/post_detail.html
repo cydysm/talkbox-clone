@@ -25,6 +25,7 @@
     {% csrf_token %}
     <input type="hidden" name="post" value="{{ post.id }}">
     <input type="hidden" name="next" value="{{ request.get_full_path }}">
+    <input type="text" name="honeypot" value="" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
     <input type="text" name="guest_name" placeholder="Name" required>
     <input type="email" name="guest_email" placeholder="Email" required>
     <textarea name="body" required></textarea>

@@ -2,6 +2,7 @@ from datetime import datetime, timezone as datetime_timezone
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -15,6 +16,7 @@ from .notifications import send_comment_notification
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 class CommentNotificationTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.author = get_user_model().objects.create_user(
             "author",
             email="author@example.com",
@@ -62,6 +64,7 @@ class CommentNotificationTests(TestCase):
                 "guest_name": "回复者",
                 "guest_email": "reply@example.com",
                 "body": "这是回复",
+                "honeypot": "",
                 "next": self.post.get_absolute_url(),
             },
         )
