@@ -24,7 +24,7 @@
           <input type="search" name="q" value="{{ request.GET.q }}" placeholder="搜索文章" aria-label="搜索文章">
         </form>
         {% if request.user.is_staff %}<a href="/admin/">Admin</a>{% endif %}
-        <form action="{% url 'blog:theme-switch' %}" method="post" class="theme-switcher" aria-label="主题模式" data-preference="{% if THEME_PREFERENCE == 'dark' or THEME_PREFERENCE == 'light' %}{{ THEME_PREFERENCE }}{% else %}auto{% endif %}">
+        <form action="{% url 'blog:theme-switch' %}" method="post" class="theme-switcher" aria-label="主题模式" data-preference="{{ THEME_SWITCH_MODE }}">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
           <button type="submit" name="theme" value="dark" class="theme-toggle-dark" aria-label="切换到深色模式" title="切换到深色模式">

@@ -21,6 +21,19 @@ def get_resolved_theme_name(request):
     return default_theme()
 
 
+def get_switch_mode(request):
+    preference = get_theme_preference(request)
+    if preference == SYSTEM_THEME:
+        return "auto"
+    if preference:
+        return preference
+
+    default_theme_name = default_theme()
+    if default_theme_name.endswith("_light"):
+        return "light"
+    return "dark"
+
+
 def theme_context(request):
     theme_name = get_resolved_theme_name(request)
     preference = get_theme_preference(request)
@@ -28,6 +41,7 @@ def theme_context(request):
         "THEME_NAME": theme_name,
         "THEME_STATIC_DIR": f"themes/{theme_name}",
         "THEME_PREFERENCE": preference,
+        "THEME_SWITCH_MODE": get_switch_mode(request),
         "SYSTEM_THEME": SYSTEM_THEME,
         "AVAILABLE_THEMES": settings.AVAILABLE_THEMES,
         "SITE_NAME": settings.SITE_NAME,

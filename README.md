@@ -73,6 +73,12 @@ COMMENT_REPLY_NOTIFY=true
 
 进入 Django Admin 的 **Theme settings**，把目标主题设为启用；同一时间只会有一个主题生效。默认主题由 `.env` 中的 `THEME=cactus_dark` 控制。
 
+访客可以通过页面顶部的深/浅图标切换个人偏好，选择会保存在浏览器 Cookie 中；显示器图标用于恢复跟随系统深浅色。全局 **Theme settings** 决定未选择偏好时的默认主题。
+
+### Admin 入口
+
+公共页面的 `Admin` 链接只对已登录且具有 `is_staff=True` 的用户显示；匿名访客和普通注册用户不会看到该入口，但 Django Admin 路由 `/admin/` 本身仍然存在。管理员可直接访问 `/admin/` 登录或管理站点。
+
 ### 图片上传限制
 
 上传接口仅允许登录后台用户调用，并使用 Pillow 校验图片内容，而不是只信任扩展名或 MIME。默认限制可在 `.env` 调整：
