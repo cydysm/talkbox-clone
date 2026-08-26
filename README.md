@@ -165,6 +165,16 @@ docker compose exec web python manage.py createsuperuser
 | `POSTS_PER_PAGE` | 10 | 列表分页大小 |
 | `FEED_LIMIT` | 20 | RSS/Atom 输出条目数 |
 
+### 一键升级
+
+```bash
+./scripts/upgrade.sh
+```
+
+流程会按顺序拉取稳定版 PostgreSQL/Redis 镜像、快进更新源码、备份数据库和媒体、构建并替换 Web 容器，最后验证 `/healthz/`。失败或超时会停止新容器并尝试用 Compose 恢复服务；升级前数据库和媒体已备份，可按备份文档恢复。所有操作记录在 `logs/upgrade_*.log`。
+
+建议在低峰期运行。首次使用前先确认服务器已安装 `git`、`curl` 和 Docker，且项目目录是可快进的 Git 工作区。
+
 ## 当前范围
 
 已实现博客核心链路。其他博客导入和插件依赖隔离仍属于后续阶段。

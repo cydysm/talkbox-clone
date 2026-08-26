@@ -15,7 +15,7 @@
 
 ## Phase 4: Platform
 - Plugin discovery, lifecycle hooks, dependency isolation, and admin controls.
-- Automated stable-version upgrade workflow with lockfile refresh and compatibility checks.
+- Automated stable-version upgrade workflow with backup, health validation, and rollback.
 - CI checks for tests, linting, migrations, Docker build, dependency audit, and image scan.
 - Scheduled backups and tested restore procedure.
 
