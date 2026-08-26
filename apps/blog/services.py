@@ -5,6 +5,8 @@ import re
 import sqlite3
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import transaction
 from django.utils.text import slugify
 
@@ -63,6 +65,125 @@ def read_emlog_export(path: str | Path) -> dict:
     return payload
 
 
+def _iso_datetime(value) -> int | None:
+    if value in (None, ""):
+        return None
+    if isinstance(value, (int, float)):
+        return int(value)
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=datetime_timezone.utc)
+        return int(parsed.timestamp())
+    except (TypeError, ValueError):
+        raise ValueError(f"无效时间格式：{value}") from None
+
+
+def normalize_generic_export(data: dict) -> dict:
+    if data.get("format") != "talkbox-generic":
+        raise ValueError("通用导入必须使用 talkbox-generic 格式")
+    if data.get("version") != 1:
+        raise ValueError("通用导入仅支持协议版本 1")
+
+    categories = []
+    category_ids = set()
+    for row in data.get("categories", []):
+        source_id = int(row["id"])
+        if source_id in category_ids:
+            raise ValueError(f"分类 ID 重复：{source_id}")
+        category_ids.add(source_id)
+        name = str(row.get("name") or "").strip()
+        if not name:
+            raise ValueError(f"分类缺少名称：{source_id}")
+        categories.append({
+            "sid": source_id,
+            "name": name,
+            "slug": row.get("slug") or "",
+        })
+
+    posts = []
+    post_ids = set()
+    for row in data.get("posts", []):
+        source_id = int(row["id"])
+        if source_id in post_ids:
+            raise ValueError(f"文章 ID 重复：{source_id}")
+        post_ids.add(source_id)
+        if not str(row.get("title") or "").strip():
+            raise ValueError(f"文章缺少标题：{source_id}")
+        if row.get("content_markdown") in (None, ""):
+            raise ValueError(f"文章缺少 Markdown 内容：{source_id}")
+        tags = row.get("tags", [])
+        posts.append({
+            "gid": source_id,
+            "title": str(row.get("title") or "").strip(),
+            "alias": row.get("slug") or "",
+            "content": row.get("content_markdown") or "",
+            "excerpt": row.get("excerpt") or "",
+            "status": "published" if row.get("status") == "published" else "draft",
+            "date": _iso_datetime(row.get("published_at")) or 0,
+            "views": max(0, int(row.get("views") or 0)),
+            "sortid": int(row["category_id"]) if row.get("category_id") is not None else 0,
+            "tags": ",".join(str(tag).strip() for tag in tags if str(tag).strip()),
+            "type": "blog",
+            "hide": "n" if row.get("status") == "published" else "y",
+            "generic_legacy_url": row.get("legacy_url") or "",
+        })
+
+    comments = []
+    comment_ids = set()
+    for row in data.get("comments", []):
+        source_id = int(row["id"])
+        if source_id in comment_ids:
+            raise ValueError(f"评论 ID 重复：{source_id}")
+        comment_ids.add(source_id)
+        author_name = str(row.get("author_name") or "").strip()
+        author_email = str(row.get("author_email") or "").strip()
+        if not author_name:
+            raise ValueError(f"评论缺少昵称：{source_id}")
+        try:
+            validate_email(author_email)
+        except ValidationError:
+            raise ValueError(f"评论邮箱无效：{source_id}") from None
+        approved = row.get("is_approved", True) is True
+        comments.append({
+            "cid": source_id,
+            "gid": int(row["post_id"]),
+            "pid": int(row["parent_id"]) if row.get("parent_id") is not None else 0,
+            "poster": author_name,
+            "mail": author_email,
+            "comment": row.get("body") or "",
+            "date": _iso_datetime(row.get("created_at")) or 0,
+            "hide": "n" if approved else "y",
+        })
+
+    missing_post_ids = {int(row["post_id"]) for row in data.get("comments", [])} - post_ids
+    if missing_post_ids:
+        raise ValueError(f"评论引用了不存在的文章：{', '.join(map(str, sorted(missing_post_ids)))}")
+    unknown_category_ids = {
+        int(row["category_id"]) for row in data.get("posts", [])
+        if row.get("category_id") is not None
+    } - category_ids
+    if unknown_category_ids:
+        raise ValueError(f"文章引用了不存在的分类：{', '.join(map(str, sorted(unknown_category_ids)))}")
+
+    return {"categories": categories, "posts": posts, "tags": [], "comments": comments}
+
+
+def read_generic_export(path: str | Path) -> dict:
+    with open(path, encoding="utf-8") as export_file:
+        payload = json.load(export_file)
+    required = {"format", "version", "posts"}
+    missing = required - payload.keys()
+    if missing:
+        raise ValueError(f"通用导出缺少字段：{', '.join(sorted(missing))}")
+    return normalize_generic_export(payload)
+
+
+@transaction.atomic
+def import_generic_export(path: str | Path, author_id=None) -> dict:
+    return import_emlog_data(read_generic_export(path), author_id=author_id)
+
+
 @transaction.atomic
 def import_emlog_data(data: dict, author_id=None) -> dict:
     User = get_user_model()
@@ -104,7 +225,7 @@ def import_emlog_data(data: dict, author_id=None) -> dict:
                 "content_markdown": row.get("content") or "",
                 "status": "published" if is_published and str(row.get("type", "blog")) == "blog" else "draft",
                 "views": max(0, int(row.get("views") or 0)),
-                "legacy_url": normalize_emlog_legacy_url(source_id),
+                "legacy_url": row.get("generic_legacy_url") or normalize_emlog_legacy_url(source_id),
                 "published_at": published if is_published else None,
             },
         )

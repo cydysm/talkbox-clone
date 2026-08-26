@@ -22,6 +22,7 @@
 - RSS 与 Atom 订阅源
 - 后台多模板切换，当前支持 Cactus Dark 和 Cactus Light
 - Emlog JSON/SQLite 导入：文章、分类、标签和评论树
+- 其他博客 `talkbox-generic` v1 JSON 导入：文章、分类、标签和评论树
 - Emlog 旧链接 301 重定向
 - 浏览量统计、站点地图和安全响应基线
 - Docker Compose 一键启动 PostgreSQL、Redis 和 Web

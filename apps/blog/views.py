@@ -132,3 +132,11 @@ def legacy_alias_redirect(request, legacy_alias):
     if post is None:
         raise Http404("旧文章不存在")
     return redirect(post, permanent=True)
+
+
+def legacy_path_redirect(request):
+    legacy_url = request.path_info
+    post = Post.objects.filter(status="published", legacy_url=legacy_url).first()
+    if post is None:
+        raise Http404("旧文章不存在")
+    return redirect(post, permanent=True)

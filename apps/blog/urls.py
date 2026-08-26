@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from . import views
 
@@ -15,3 +15,11 @@ urlpatterns = [
     path("post-<int:legacy_id>.html", views.legacy_post_redirect),
     path("<int:legacy_id>.html", views.legacy_post_redirect),
 ]
+
+
+# Generic importers can preserve arbitrary source URLs. This fallback runs only
+# after every concrete blog route has failed to match.
+urlpatterns.append(re_path(
+    r"^(?!category/|tag/|search/|rss\.xml$|atom\.xml$|sitemap\.xml$|healthz/|comments/|media-api/|admin/|static/|media/).+$",
+    views.legacy_path_redirect,
+))
