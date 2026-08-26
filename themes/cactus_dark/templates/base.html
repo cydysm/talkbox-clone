@@ -24,12 +24,18 @@
           <input type="search" name="q" value="{{ request.GET.q }}" placeholder="搜索文章" aria-label="搜索文章">
         </form>
         {% if request.user.is_staff %}<a href="/admin/">Admin</a>{% endif %}
-        <form action="{% url 'blog:theme-switch' %}" method="post" class="theme-switcher" aria-label="主题模式">
+        <form action="{% url 'blog:theme-switch' %}" method="post" class="theme-switcher" aria-label="主题模式" data-preference="{% if THEME_PREFERENCE == 'dark' or THEME_PREFERENCE == 'light' %}{{ THEME_PREFERENCE }}{% else %}auto{% endif %}">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
-          <button type="submit" name="theme" value="dark" {% if THEME_PREFERENCE == 'dark' %}aria-current="true"{% endif %}>深色</button>
-          <button type="submit" name="theme" value="light" {% if THEME_PREFERENCE == 'light' %}aria-current="true"{% endif %}>浅色</button>
-          <button type="submit" name="theme" value="{{ SYSTEM_THEME }}" {% if THEME_PREFERENCE == SYSTEM_THEME or THEME_PREFERENCE is None %}aria-current="true"{% endif %}>系统</button>
+          <button type="submit" name="theme" value="dark" class="theme-toggle-dark" aria-label="切换到深色模式" title="切换到深色模式">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M21 14.5A9 9 0 0 1 9.5 3a9 9 0 1 0 11.5 11.5Z"/></svg>
+          </button>
+          <button type="submit" name="theme" value="light" class="theme-toggle-light" aria-label="切换到浅色模式" title="切换到浅色模式">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="4.25"/><path d="M12 2.5v2.2M12 19.3v2.2M4.35 4.35l1.55 1.55M18.1 18.1l1.55 1.55M2.5 12h2.2M19.3 12h2.2M4.35 19.65l1.55-1.55M18.1 5.9l1.55-1.55"/></svg>
+          </button>
+          <button type="submit" name="theme" value="{{ SYSTEM_THEME }}" aria-label="跟随系统模式" title="跟随系统模式">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2.75" y="4.25" width="18.5" height="12.5" rx="1.5"/><path d="M8.5 20h7M12 16.75V20"/></svg>
+          </button>
         </form>
       </nav>
     </header>

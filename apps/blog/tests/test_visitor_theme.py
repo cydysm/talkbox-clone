@@ -6,7 +6,8 @@ class VisitorThemeTests(TestCase):
     def test_default_preference_follows_site_theme(self):
         response = self.client.get(reverse("blog:post-list"))
         self.assertContains(response, "/static/themes/cactus_dark/css/main.css")
-        self.assertContains(response, 'value="system" aria-current="true"')
+        self.assertContains(response, 'data-preference="auto"')
+        self.assertContains(response, 'value="system" aria-label="跟随系统模式"')
 
     def test_explicit_preference_is_stored_and_restored(self):
         response = self.client.post(

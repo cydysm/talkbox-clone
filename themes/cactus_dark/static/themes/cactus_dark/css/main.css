@@ -70,19 +70,57 @@ footer {
   gap: .25rem;
 }
 
+.theme-switcher .theme-toggle-light {
+  display: none;
+}
+
+.theme-switcher[data-preference="dark"] .theme-toggle-dark,
+.theme-switcher[data-preference="light"] .theme-toggle-light {
+  display: none;
+}
+
+.theme-switcher[data-preference="dark"] .theme-toggle-light,
+.theme-switcher[data-preference="light"] .theme-toggle-dark {
+  display: inline-flex;
+}
+
+@media (prefers-color-scheme: dark) {
+  .theme-switcher[data-preference="auto"] .theme-toggle-dark {
+    display: none;
+  }
+
+  .theme-switcher[data-preference="auto"] .theme-toggle-light {
+    display: inline-flex;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .theme-switcher[data-preference="auto"] .theme-toggle-light {
+    display: none;
+  }
+}
+
 .theme-switcher button {
   width: auto;
   margin-bottom: 0;
-  padding: .3rem .45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .32rem;
   color: var(--meta);
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
-  font-size: .72rem;
+  border: 0;
+}
+
+.theme-switcher svg {
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-width: 1.7;
 }
 
 .theme-switcher button[aria-current] {
   color: var(--accent);
-  border-color: var(--accent);
 }
 
 a {
