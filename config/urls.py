@@ -8,14 +8,20 @@ from apps.blog.sitemaps import PostSitemap
 from apps.blog.feeds import PostAtomFeed, PostRSSFeed
 from config.health import healthz
 from apps.blog.views import legacy_query_redirect
+from config.rate_limit import RateLimitedLoginView
 
 sitemaps = {"posts": PostSitemap}
+
+admin_urlpatterns = [
+    path("login/", RateLimitedLoginView.as_view(), name="login"),
+    path("", admin.site.urls),
+]
 
 urlpatterns = [
     path("", include("apps.blog.urls")),
     path("comments/", include("apps.comments.urls")),
     path("media-api/", include("apps.mediafiles.urls")),
-    path("admin/", admin.site.urls),
+    path("admin/", include(admin_urlpatterns)),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("rss.xml", PostRSSFeed(), name="rss"),
     path("atom.xml", PostAtomFeed(), name="atom"),

@@ -1,3 +1,5 @@
+import threading
+
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
@@ -7,6 +9,22 @@ from django.views.decorators.http import require_POST
 from .notifications import send_comment_notification
 
 from .forms import CommentForm
+
+
+def _is_test_environment():
+    import sys
+
+    return "test" in sys.argv
+
+
+def send_comment_notification_async(comment):
+    """Send notification in a background thread to avoid blocking the request."""
+
+    if _is_test_environment():
+        send_comment_notification(comment)
+        return
+    thread = threading.Thread(target=send_comment_notification, args=(comment,), daemon=True)
+    thread.start()
 
 
 @require_POST
@@ -32,7 +50,7 @@ def create_comment(request):
             True,
             getattr(settings, "COMMENT_INTERVAL_SECONDS", 30),
         )
-        send_comment_notification(comment)
+        send_comment_notification_async(comment)
         messages.success(request, "评论已发布。" if comment.is_approved else "评论已提交，等待审核。")
     else:
         messages.error(request, "评论提交失败，请检查表单。")
