@@ -52,3 +52,24 @@ class BlogBrowsingTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.post.title)
         self.assertNotContains(response, self.draft.title)
+
+    def test_post_lists_are_paginated(self):
+        for number in range(2, 14):
+            Post.objects.create(
+                title=f"分页文章 {number}",
+                slug=f"paged-post-{number}",
+                author=self.user,
+                content_markdown="内容",
+                status="published",
+            )
+        with self.settings(POSTS_PER_PAGE=5):
+            first_page = self.client.get(reverse("blog:post-list"))
+            second_page = self.client.get(reverse("blog:post-list"), {"page": "2"})
+            invalid_page = self.client.get(reverse("blog:post-list"), {"page": "999"})
+
+        self.assertEqual(first_page.status_code, 200)
+        self.assertEqual(second_page.status_code, 200)
+        self.assertEqual(invalid_page.status_code, 200)
+        self.assertContains(first_page, "第 1 / 3 页")
+        self.assertContains(second_page, "第 2 / 3 页")
+        self.assertContains(invalid_page, "第 1 / 3 页")

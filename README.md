@@ -14,6 +14,7 @@
 - 轻量插件机制与 Markdown/HTML 内容钩子
 - Cactus Dark 主题模板
 - 分类页、标签页和站内搜索
+- 文章列表统一分页，每页数量可配置
 - 后台多模板切换，当前支持 Cactus Dark 和 Cactus Light
 - Emlog JSON/SQLite 导入：文章、分类、标签和评论树
 - Emlog 旧链接 301 重定向
@@ -95,6 +96,8 @@ IMAGE_MAX_DIMENSION=8000
 - `/search/?q=关键词`：搜索标题、摘要、正文和标签
 
 草稿始终不会出现在这些页面中。
+
+列表分页默认每页 10 篇，可在 `.env` 中使用 `POSTS_PER_PAGE` 调整。
 
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 

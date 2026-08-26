@@ -121,6 +121,7 @@ for _plugin_dir in PLUGIN_DIRS:
     if str(_plugin_dir) not in sys.path:
         sys.path.insert(0, str(_plugin_dir))
 SITE_NAME = env("SITE_NAME")
+POSTS_PER_PAGE = env.int("POSTS_PER_PAGE", default=10)
 
 EMAIL_BACKEND = env(
     "EMAIL_BACKEND",

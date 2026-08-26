@@ -1,13 +1,26 @@
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
 import markdown
 from django.core.cache import cache
+from django.core.paginator import InvalidPage, Paginator
 from django.db import models
 from django.db.models import F
 
 from .models import Category, Post
 from apps.plugins.registry import registry
+
+
+def render_paginated(request, queryset, template="blog/post_list.html", extra_context=None):
+    paginator = Paginator(queryset, settings.POSTS_PER_PAGE)
+    page_number = request.GET.get("page", "1")
+    try:
+        page = paginator.page(page_number)
+    except (InvalidPage, ValueError):
+        page = paginator.page(1)
+    context = {"page_obj": page, "posts": page.object_list, **(extra_context or {})}
+    return render(request, template, context)
 
 
 def post_list_or_legacy_redirect(request):
@@ -19,7 +32,7 @@ def post_list_or_legacy_redirect(request):
         .select_related("author", "category")
         .only("id", "title", "slug", "excerpt", "views", "published_at", "created_at", "updated_at", "author__username", "category__name")
     )
-    return render(request, "blog/post_list.html", {"posts": posts})
+    return render_paginated(request, posts)
 
 
 def published_posts():
@@ -33,20 +46,20 @@ def published_posts():
 def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug)
     posts = published_posts().filter(category=category)
-    return render(
+    return render_paginated(
         request,
-        "blog/post_list.html",
-        {"posts": posts, "page_title": f"分类：{category.name}"},
+        posts,
+        extra_context={"page_title": f"分类：{category.name}"},
     )
 
 
 def tag_detail(request, tag_id):
     posts = published_posts().filter(tags__id=tag_id)
     tag_name = posts.first().tags.all()[0].name if posts else ""
-    return render(
+    return render_paginated(
         request,
-        "blog/post_list.html",
-        {"posts": posts, "page_title": f"标签：{tag_name}" if tag_name else "标签"},
+        posts,
+        extra_context={"page_title": f"标签：{tag_name}" if tag_name else "标签"},
     )
 
 
@@ -60,10 +73,11 @@ def search_posts(request):
             | models.Q(content_markdown__icontains=query)
             | models.Q(tags__name__icontains=query)
         ).distinct()
-    return render(
+    return render_paginated(
         request,
-        "blog/search.html",
-        {"posts": posts, "query": query},
+        posts,
+        template="blog/search.html",
+        extra_context={"query": query},
     )
 
 
