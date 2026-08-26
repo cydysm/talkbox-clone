@@ -1,9 +1,11 @@
 import json
+import importlib.metadata
 from dataclasses import dataclass, field
 from importlib import import_module
 from pathlib import Path
 
 from django.conf import settings
+from packaging.requirements import Requirement
 
 from apps.blog.models import PluginSetting
 
@@ -33,6 +35,7 @@ class PluginRegistry:
                 with manifest_path.open(encoding="utf-8") as manifest_file:
                     metadata = json.load(manifest_file)
                 name = metadata["name"]
+                self._validate_dependencies(manifest_path.parent, metadata.get("dependencies", []))
                 module_name = f"{manifest_path.parent.name}.plugin"
                 try:
                     module = import_module(module_name)
@@ -52,6 +55,33 @@ class PluginRegistry:
                     hooks=hooks,
                 )
         return self.available()
+
+    def _validate_dependencies(self, plugin_path: Path, dependencies) -> None:
+        requirements = [str(item).strip() for item in dependencies or [] if str(item).strip()]
+        requirements_file = plugin_path / "requirements.txt"
+        if requirements_file.exists():
+            file_requirements = []
+            for raw_line in requirements_file.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if any(token in line for token in ("\n", "; --")):
+                    raise ValueError(f"{plugin_path.name}/requirements.txt 包含不受支持的选项")
+                file_requirements.append(line)
+            requirements.extend(file_requirements)
+
+        missing = []
+        for requirement in requirements:
+            try:
+                parsed = Requirement(requirement)
+                importlib.metadata.version(parsed.name)
+            except (ValueError, importlib.metadata.PackageNotFoundError):
+                missing.append(requirement)
+        if missing:
+            raise RuntimeError(
+                "插件依赖未安装：" + ", ".join(missing)
+                + f"。请在当前 Python 环境安装后重启，或删除 {plugin_path.name}/requirements.txt 对应依赖。"
+            )
 
     def available(self) -> list[Plugin]:
         return list(self._plugins.values())

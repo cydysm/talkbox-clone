@@ -107,6 +107,7 @@ THUMBNAIL_SIZE=240,240
 
 - `plugin.json`：声明 `name`、`version` 和 `description`
 - 可选 `plugin.py`：定义 `transform_markdown` 或 `transform_html` 钩子
+- 可选 `requirements.txt`：声明额外 Python 依赖；启动时会校验当前环境，缺失则拒绝启动，不会静默加载半可用插件
 
 在 Django Admin 的 **Plugin settings** 中启用插件。仓库内置 `Markdown Footnote` 示例，会把文章 HTML 中的 `[FOOTNOTE]` 替换为页脚说明。
 
