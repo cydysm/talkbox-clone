@@ -23,7 +23,11 @@ jobs:
       - name: Run tests
         env:
           DJANGO_SETTINGS_MODULE: config.settings.local
-        run: python manage.py test --verbosity=2
+          SECRET_KEY: ci-only-secret-key-0123456789abcdef
+          ALLOWED_HOSTS: example.com
+        run: |
+          python manage.py collectstatic --noinput
+          python manage.py test --verbosity=2
       - name: Check migrations
         run: python manage.py makemigrations --check --dry-run
       - name: System check

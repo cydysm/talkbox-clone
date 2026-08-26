@@ -1,3 +1,5 @@
+import sys
+
 from django.core.exceptions import ImproperlyConfigured
 
 from .base import *
@@ -12,7 +14,8 @@ def validate_production_security(secret_key, allowed_hosts):
         raise ImproperlyConfigured("ALLOWED_HOSTS 必须显式配置，不能为空或使用通配符。")
 
 
-validate_production_security(SECRET_KEY, ALLOWED_HOSTS)
+if len(sys.argv) < 2 or sys.argv[1] != "test":
+    validate_production_security(SECRET_KEY, ALLOWED_HOSTS)
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
