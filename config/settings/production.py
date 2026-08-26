@@ -1,5 +1,6 @@
-from .base import *
 from django.core.exceptions import ImproperlyConfigured
+
+from .base import *
 
 
 def validate_production_security(secret_key, allowed_hosts):

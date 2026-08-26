@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta, timezone as datetime_timezone
+from datetime import datetime, timedelta
+from datetime import timezone as datetime_timezone
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase

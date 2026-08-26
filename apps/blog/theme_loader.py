@@ -1,8 +1,9 @@
+from pathlib import Path
+
 from django.conf import settings
 from django.template import Origin, TemplateDoesNotExist
 from django.template.loaders.base import Loader as BaseLoader
 from django.template.loaders.cached import Loader as CachedLoader
-from pathlib import Path
 
 
 class ActiveThemeFilesystemLoader(BaseLoader):

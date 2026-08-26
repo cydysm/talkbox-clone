@@ -1,9 +1,8 @@
 from pathlib import Path
 
-from django.core.cache import cache
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import TestCase, override_settings
-from django.urls import reverse
 
 from apps.blog.models import PluginSetting, Post
 

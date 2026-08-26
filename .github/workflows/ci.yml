@@ -16,6 +16,10 @@ jobs:
           python-version: "3.13"
       - name: Install dependencies
         run: pip install -r requirements/base.txt
+      - name: Lint with ruff
+        run: |
+          pip install ruff
+          ruff check apps config scripts/
       - name: Run tests
         env:
           DJANGO_SETTINGS_MODULE: config.settings.local

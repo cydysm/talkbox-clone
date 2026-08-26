@@ -1,5 +1,5 @@
-import json
 import importlib.metadata
+import json
 from dataclasses import dataclass, field
 from importlib import import_module
 from pathlib import Path

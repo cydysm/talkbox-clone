@@ -1,10 +1,10 @@
-from datetime import datetime, timezone as datetime_timezone
-from pathlib import Path
 import json
+from datetime import datetime
+from datetime import timezone as datetime_timezone
+from pathlib import Path
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse
 
 from ..models import Category, Post
 from ..services import import_emlog_data, import_generic_export, normalize_generic_export

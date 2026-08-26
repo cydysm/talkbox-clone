@@ -1,10 +1,9 @@
 from io import BytesIO
-from PIL import Image, ImageDraw, ImageFont
 
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 
 class UploadedImage(models.Model):

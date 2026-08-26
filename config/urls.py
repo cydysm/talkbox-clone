@@ -4,10 +4,9 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
-from apps.blog.sitemaps import PostSitemap
 from apps.blog.feeds import PostAtomFeed, PostRSSFeed
+from apps.blog.sitemaps import PostSitemap
 from config.health import healthz
-from apps.blog.views import legacy_query_redirect
 from config.rate_limit import RateLimitedLoginView
 
 sitemaps = {"posts": PostSitemap}

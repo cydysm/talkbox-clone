@@ -1,9 +1,10 @@
+from pathlib import Path
+
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
-from django.conf import settings
-from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 
 from apps.blog.models import Post
@@ -58,7 +59,7 @@ def upload_images(request):
             with Image.open(uploaded_file) as probe:
                 image_format = (probe.format or "").upper()
                 width, height = probe.size
-                if not image_format in settings.ALLOWED_IMAGE_FORMATS:
+                if image_format not in settings.ALLOWED_IMAGE_FORMATS:
                     raise UnidentifiedImageError
                 if (
                     width < 1

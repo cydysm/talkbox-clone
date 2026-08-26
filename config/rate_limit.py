@@ -2,7 +2,6 @@ from django.contrib.auth import views as auth_views
 from django.core.cache import cache
 from django.http import HttpResponseForbidden
 
-
 LOGIN_RATE_LIMIT = 5
 LOGIN_RATE_WINDOW = 300
 

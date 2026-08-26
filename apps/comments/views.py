@@ -6,9 +6,8 @@ from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 
-from .notifications import send_comment_notification
-
 from .forms import CommentForm
+from .notifications import send_comment_notification
 
 
 def _is_test_environment():

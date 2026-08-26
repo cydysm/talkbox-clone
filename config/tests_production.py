@@ -1,5 +1,6 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.test import SimpleTestCase
+
 from config.settings.production import validate_production_security
 
 
