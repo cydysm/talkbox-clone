@@ -43,6 +43,7 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-talkbox}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-talkbox}
       REDIS_URL: redis://redis:6379/0
       GUNICORN_WORKERS: ${GUNICORN_WORKERS:-2}
+      GUNICORN_ACCESS_LOG: ${GUNICORN_ACCESS_LOG:-}
     ports:
       - "${HTTP_PORT:-8000}:8000"
     volumes:

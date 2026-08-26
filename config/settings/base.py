@@ -82,6 +82,7 @@ TEMPLATES = [
 ]
 
 DATABASES = {"default": env.db_url("DATABASE_URL")}
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},

@@ -148,6 +148,20 @@ docker compose exec web python manage.py createsuperuser
 
 生产环境必须修改 `SECRET_KEY`、`POSTGRES_PASSWORD`，并配置真实的 `ALLOWED_HOSTS`。对外启用 HTTPS 时设置 `SECURE_SSL_REDIRECT=true`。
 
+### 低配服务器调优（1C2G / 1M 带宽）
+
+默认配置已针对小服务器优化：
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `GUNICORN_WORKERS` | 2 | gevent 协程模型，2 进程足够 |
+| `GUNICORN_WORKER_CONNECTIONS` | 200 | 每进程并发连接数 |
+| `GUNICORN_MAX_REQUESTS` | 2000 | 自动重启 worker 防内存泄漏 |
+| `GUNICORN_ACCESS_LOG` | 空=关闭 | 关闭 access log 减少磁盘 I/O |
+| `CONN_MAX_AGE` | 60 | 数据库持久连接，减少握手开销 |
+| `POSTS_PER_PAGE` | 10 | 列表分页大小 |
+| `FEED_LIMIT` | 20 | RSS/Atom 输出条目数 |
+
 ## 当前范围
 
 已实现博客核心链路。其他博客导入和插件依赖隔离仍属于后续阶段。
