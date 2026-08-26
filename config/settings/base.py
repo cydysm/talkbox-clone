@@ -149,6 +149,9 @@ IMAGE_MAX_DIMENSION = env.int("IMAGE_MAX_DIMENSION", default=8000)
 ALLOWED_IMAGE_FORMATS = ["JPEG", "PNG", "WEBP", "GIF"]
 THUMBNAIL_SIZE = env.tuple("THUMBNAIL_SIZE", default=(240, 240))
 
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(exist_ok=True)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -162,7 +165,7 @@ LOGGING = {
         },
         "app_file": {
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": str(BASE_DIR / "logs" / "talkbox.log"),
+            "filename": str(LOG_DIR / "talkbox.log"),
             "maxBytes": 10 * 1024 * 1024,
             "backupCount": 3,
             "formatter": "simple",
