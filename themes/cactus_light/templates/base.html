@@ -39,7 +39,16 @@
         </form>
       </nav>
     </header>
-    <main>{% block content %}{% endblock %}</main>
+    <main>
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
     <footer>Powered by {{ SITE_NAME }}</footer>
   </body>
 </html>

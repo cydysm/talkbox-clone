@@ -281,3 +281,27 @@ footer {
     width: min(39rem, calc(100% - 1.5rem));
   }
 }
+/* Flash messages */
+.messages {
+  width: min(40rem, calc(100% - 2.5rem));
+  margin: 1rem auto;
+}
+
+.message {
+  padding: .75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: .5rem;
+  font-size: .875rem;
+}
+
+.message-success {
+  background: #1a3a2a;
+  color: #7ee2a0;
+  border: 1px solid #2d5f43;
+}
+
+.message-error {
+  background: #3a1a1a;
+  color: #e27e7e;
+  border: 1px solid #5f2d2d;
+}
