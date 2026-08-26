@@ -39,7 +39,7 @@ class LoginRateLimitTests(TestCase):
         self.assertIsNone(cache.get("login-fail:127.0.0.1"))
 
     def _post_login(self, password):
-        return self.client.post("/admin/login/", {
+        return self.client.post("/control-panel/login/", {
             "username": "admin",
             "password": password,
             "next": "/admin/",

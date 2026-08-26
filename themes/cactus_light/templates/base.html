@@ -23,7 +23,7 @@
         <form action="{% url 'blog:search' %}" method="get" class="search-form">
           <input type="search" name="q" value="{{ request.GET.q }}" placeholder="搜索文章" aria-label="搜索文章">
         </form>
-        {% if request.user.is_staff %}<a href="/admin/">Admin</a>{% endif %}
+        {% if request.user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
         <form action="{% url 'blog:theme-switch' %}" method="post" class="theme-switcher" aria-label="主题模式" data-preference="{{ THEME_SWITCH_MODE }}">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">

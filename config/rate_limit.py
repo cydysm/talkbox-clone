@@ -11,6 +11,9 @@ class RateLimitedLoginView(auth_views.LoginView):
 
     template_name = "admin/login.html"
 
+    def get_success_url(self):
+        return "/control-panel/"
+
     def dispatch(self, request, *args, **kwargs):
         client_ip = request.META.get("REMOTE_ADDR") or "unknown"
         key = f"login-fail:{client_ip}"

@@ -9,6 +9,8 @@ from apps.blog.sitemaps import PostSitemap
 from config.health import healthz
 from config.rate_limit import RateLimitedLoginView
 
+ADMIN_URL = "control-panel/"
+
 sitemaps = {"posts": PostSitemap}
 
 admin_urlpatterns = [
@@ -20,7 +22,7 @@ urlpatterns = [
     path("", include("apps.blog.urls")),
     path("comments/", include("apps.comments.urls")),
     path("media-api/", include("apps.mediafiles.urls")),
-    path("admin/", include(admin_urlpatterns)),
+    path(ADMIN_URL, include(admin_urlpatterns)),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("rss.xml", PostRSSFeed(), name="rss"),
     path("atom.xml", PostAtomFeed(), name="atom"),
