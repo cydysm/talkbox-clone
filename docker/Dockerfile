@@ -11,8 +11,8 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends libpq5 curl \
  && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt
+COPY requirements /tmp/requirements
+RUN pip install --upgrade pip && pip install -r /tmp/requirements/base.txt
 
 COPY . .
 
