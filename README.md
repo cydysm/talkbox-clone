@@ -101,6 +101,18 @@ THUMBNAIL_SIZE=240,240
 
 备份文件保留最近 7 天，可通过 `BACKUP_RETENTION_DAYS` 调整。
 
+### 恢复备份
+
+```bash
+# 查看可用备份（不传参数会自动列出）
+./scripts/restore.sh
+
+# 恢复到指定时间点（例如 talkbox_20260826_030000.sql.gz）
+./scripts/restore.sh 20260826_030000
+```
+
+恢复流程：停止 Web → 清空并导入数据库 → 恢复媒体文件 → 重启 Web 并验证健康。操作前需要二次确认。
+
 ### 插件机制
 
 每个插件放在 `plugins/<plugin-name>/`，必须包含：
@@ -177,4 +189,4 @@ docker compose exec web python manage.py createsuperuser
 
 ## 当前范围
 
-已实现博客核心链路。其他博客导入和插件依赖隔离仍属于后续阶段。
+所有核心功能、通用导入器、插件依赖隔离和一键升级/恢复流程已完成。
