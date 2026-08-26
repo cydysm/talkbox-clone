@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from apps.blog.models import Post
 from apps.mediafiles.models import UploadedImage
+
 from .models import Comment
 
 
@@ -41,8 +42,9 @@ class AdminOperationsTests(TestCase):
         self.assertTrue(Comment.objects.filter(is_approved=True).count(), 3)
 
     def test_uploaded_image_is_listed_in_admin(self):
-        from django.core.files.uploadedfile import SimpleUploadedFile
         from io import BytesIO
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
         from PIL import Image
 
         buffer = BytesIO()

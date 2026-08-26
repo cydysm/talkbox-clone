@@ -1,16 +1,17 @@
-from django.conf import settings
-from django.contrib import messages
-from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect, render
-
 import markdown
+from django.conf import settings
 from django.core.cache import cache
 from django.core.paginator import InvalidPage, Paginator
 from django.db import models
 from django.db.models import F
+from django.http import Http404, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
+
+from apps.plugins.registry import registry
 
 from .models import Category, Post
-from apps.plugins.registry import registry
+from .theme_preferences import THEME_COOKIE_NAME, THEME_PREFERENCES
 
 
 def render_paginated(request, queryset, template="blog/post_list.html", extra_context=None):
@@ -140,3 +141,31 @@ def legacy_path_redirect(request):
     if post is None:
         raise Http404("旧文章不存在")
     return redirect(post, permanent=True)
+
+
+def switch_theme(request):
+    if request.method != "POST":
+        return redirect("blog:post-list")
+
+    theme = request.POST.get("theme")
+    if theme not in THEME_PREFERENCES:
+        return HttpResponseBadRequest("未知主题偏好")
+
+    next_url = request.POST.get("next") or "/"
+    if not url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = "/"
+
+    response = redirect(next_url)
+    response.set_cookie(
+        THEME_COOKIE_NAME,
+        theme,
+        max_age=365 * 24 * 60 * 60,
+        secure=request.is_secure(),
+        httponly=True,
+        samesite="Lax",
+    )
+    return response

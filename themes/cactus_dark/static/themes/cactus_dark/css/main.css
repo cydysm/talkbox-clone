@@ -65,6 +65,26 @@ footer {
   font-size: .78rem;
 }
 
+.theme-switcher {
+  display: inline-flex;
+  gap: .25rem;
+}
+
+.theme-switcher button {
+  width: auto;
+  margin-bottom: 0;
+  padding: .3rem .45rem;
+  color: var(--meta);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--border) 35%, transparent);
+  font-size: .72rem;
+}
+
+.theme-switcher button[aria-current] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 a {
   color: var(--link);
   text-decoration: none;

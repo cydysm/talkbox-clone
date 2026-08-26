@@ -6,7 +6,6 @@ from django.template.loader import render_to_string
 
 from .models import Comment
 
-
 logger = logging.getLogger(__name__)
 
 

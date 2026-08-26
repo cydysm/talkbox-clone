@@ -7,7 +7,12 @@
     <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
     <meta name="description" content="{% block description %}{{ SITE_NAME }} - Python blog{% endblock %}">
     {% block canonical %}{% endblock %}
-    <link rel="stylesheet" href="/static/themes/{{ THEME_NAME }}/css/main.css">
+    {% if THEME_PREFERENCE == 'system' %}
+      <link rel="stylesheet" href="/static/themes/cactus_dark/css/main.css" media="(prefers-color-scheme: dark)">
+      <link rel="stylesheet" href="/static/themes/cactus_light/css/main.css" media="(prefers-color-scheme: light)">
+    {% else %}
+      <link rel="stylesheet" href="/static/themes/{{ THEME_NAME }}/css/main.css">
+    {% endif %}
     <link rel="alternate" type="application/rss+xml" title="{{ SITE_NAME }} RSS" href="{% url 'rss' %}">
     <link rel="alternate" type="application/atom+xml" title="{{ SITE_NAME }} Atom" href="{% url 'atom' %}">
   </head>
@@ -18,7 +23,14 @@
         <form action="{% url 'blog:search' %}" method="get" class="search-form">
           <input type="search" name="q" value="{{ request.GET.q }}" placeholder="搜索文章" aria-label="搜索文章">
         </form>
-        <a href="/admin/">Admin</a>
+        {% if request.user.is_staff %}<a href="/admin/">Admin</a>{% endif %}
+        <form action="{% url 'blog:theme-switch' %}" method="post" class="theme-switcher" aria-label="主题模式">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit" name="theme" value="dark" {% if THEME_PREFERENCE == 'dark' %}aria-current="true"{% endif %}>深色</button>
+          <button type="submit" name="theme" value="light" {% if THEME_PREFERENCE == 'light' %}aria-current="true"{% endif %}>浅色</button>
+          <button type="submit" name="theme" value="{{ SYSTEM_THEME }}" {% if THEME_PREFERENCE == SYSTEM_THEME or THEME_PREFERENCE is None %}aria-current="true"{% endif %}>系统</button>
+        </form>
       </nav>
     </header>
     <main>{% block content %}{% endblock %}</main>
