@@ -12,7 +12,12 @@
   <body>
     <header class="site-header">
       <a href="{% url 'blog:post-list' %}" class="site-title">{{ SITE_NAME }}</a>
-      <nav><a href="/admin/">Admin</a></nav>
+      <nav class="site-nav">
+        <form action="{% url 'blog:search' %}" method="get" class="search-form">
+          <input type="search" name="q" value="{{ request.GET.q }}" placeholder="搜索文章" aria-label="搜索文章">
+        </form>
+        <a href="/admin/">Admin</a>
+      </nav>
     </header>
     <main>{% block content %}{% endblock %}</main>
     <footer>Powered by {{ SITE_NAME }}</footer>

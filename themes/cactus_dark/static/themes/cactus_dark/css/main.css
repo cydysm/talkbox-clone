@@ -52,6 +52,19 @@ footer {
   text-decoration: none;
 }
 
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.search-form input {
+  width: 11rem;
+  margin-bottom: 0;
+  padding: .35rem .55rem;
+  font-size: .78rem;
+}
+
 a {
   color: var(--link);
   text-decoration: none;

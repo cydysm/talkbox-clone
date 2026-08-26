@@ -13,6 +13,7 @@
 - 图片上传安全校验：真实格式、大小、数量和尺寸限制
 - 轻量插件机制与 Markdown/HTML 内容钩子
 - Cactus Dark 主题模板
+- 分类页、标签页和站内搜索
 - 后台多模板切换，当前支持 Cactus Dark 和 Cactus Light
 - Emlog JSON/SQLite 导入：文章、分类、标签和评论树
 - Emlog 旧链接 301 重定向
@@ -84,6 +85,16 @@ IMAGE_MAX_DIMENSION=8000
 - 可选 `plugin.py`：定义 `transform_markdown` 或 `transform_html` 钩子
 
 在 Django Admin 的 **Plugin settings** 中启用插件。仓库内置 `Markdown Footnote` 示例，会把文章 HTML 中的 `[FOOTNOTE]` 替换为页脚说明。
+
+### 内容浏览
+
+公开页面包括：
+
+- `/category/<slug>/`：按分类筛选已发布文章
+- `/tag/<id>/`：按标签筛选已发布文章
+- `/search/?q=关键词`：搜索标题、摘要、正文和标签
+
+草稿始终不会出现在这些页面中。
 
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 

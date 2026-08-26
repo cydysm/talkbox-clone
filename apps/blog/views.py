@@ -3,9 +3,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 import markdown
 from django.core.cache import cache
+from django.db import models
 from django.db.models import F
 
-from .models import Post
+from .models import Category, Post
 from apps.plugins.registry import registry
 
 
@@ -19,6 +20,51 @@ def post_list_or_legacy_redirect(request):
         .only("id", "title", "slug", "excerpt", "views", "published_at", "created_at", "updated_at", "author__username", "category__name")
     )
     return render(request, "blog/post_list.html", {"posts": posts})
+
+
+def published_posts():
+    return (
+        Post.objects.filter(status="published")
+        .select_related("author", "category")
+        .prefetch_related("tags")
+    )
+
+
+def category_detail(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    posts = published_posts().filter(category=category)
+    return render(
+        request,
+        "blog/post_list.html",
+        {"posts": posts, "page_title": f"分类：{category.name}"},
+    )
+
+
+def tag_detail(request, tag_id):
+    posts = published_posts().filter(tags__id=tag_id)
+    tag_name = posts.first().tags.all()[0].name if posts else ""
+    return render(
+        request,
+        "blog/post_list.html",
+        {"posts": posts, "page_title": f"标签：{tag_name}" if tag_name else "标签"},
+    )
+
+
+def search_posts(request):
+    query = request.GET.get("q", "").strip()
+    posts = published_posts()
+    if query:
+        posts = posts.filter(
+            models.Q(title__icontains=query)
+            | models.Q(excerpt__icontains=query)
+            | models.Q(content_markdown__icontains=query)
+            | models.Q(tags__name__icontains=query)
+        ).distinct()
+    return render(
+        request,
+        "blog/search.html",
+        {"posts": posts, "query": query},
+    )
 
 
 def post_detail(request, slug):
