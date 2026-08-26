@@ -146,7 +146,7 @@ docker compose up --build -d
 docker compose exec web python manage.py createsuperuser
 ```
 
-生产环境必须修改 `SECRET_KEY`、`POSTGRES_PASSWORD`，并配置真实的 `ALLOWED_HOSTS`。对外启用 HTTPS 时设置 `SECURE_SSL_REDIRECT=true`。
+生产环境必须修改 `SECRET_KEY`、`POSTGRES_PASSWORD`，并配置真实的 `ALLOWED_HOSTS`。启动时会强制校验密钥强度和主机白名单，拒绝默认密钥、弱密钥、空主机列表和通配符配置。对外启用 HTTPS 时设置 `SECURE_SSL_REDIRECT=true`。
 
 ### 低配服务器调优（1C2G / 1M 带宽）
 
