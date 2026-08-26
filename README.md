@@ -15,6 +15,7 @@
 - 后台评论审核、媒体库管理和文章批量发布/草稿操作
 - 作者与后台用户可预览草稿，访客不可访问
 - 评论蜜罐防护和 IP 提交间隔限制
+- `/healthz/` 应用、数据库和缓存健康检查
 - Cactus Dark 主题模板
 - 分类页、标签页和站内搜索
 - 文章列表统一分页，每页数量可配置
@@ -113,6 +114,10 @@ IMAGE_MAX_DIMENSION=8000
 ### 评论防刷
 
 评论表单包含对普通用户隐藏的蜜罐字段。同一 IP 默认每 `COMMENT_INTERVAL_SECONDS=30` 秒只能提交一次，可在 `.env` 调整。
+
+### 健康检查
+
+Docker 与负载均衡可探测 `GET /healthz/`。该接口会检查数据库连接和缓存读写，任一失败返回 HTTP 503。
 
 默认读取 `.env`；本地设置使用 `config.settings.local`。PostgreSQL 和 Redis 可通过 Docker 单独运行。
 

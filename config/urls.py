@@ -6,6 +6,7 @@ from django.urls import include, path
 
 from apps.blog.sitemaps import PostSitemap
 from apps.blog.feeds import PostAtomFeed, PostRSSFeed
+from config.health import healthz
 from apps.blog.views import legacy_query_redirect
 
 sitemaps = {"posts": PostSitemap}
@@ -18,4 +19,5 @@ urlpatterns = [
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("rss.xml", PostRSSFeed(), name="rss"),
     path("atom.xml", PostAtomFeed(), name="atom"),
+    path("healthz/", healthz, name="healthz"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

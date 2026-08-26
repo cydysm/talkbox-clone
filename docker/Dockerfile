@@ -23,6 +23,6 @@ USER talkbox
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s CMD curl -fsS http://127.0.0.1:8000/ || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s CMD curl -fsS http://127.0.0.1:8000/healthz/ || exit 1
 
 ENTRYPOINT ["./scripts/start.sh"]
