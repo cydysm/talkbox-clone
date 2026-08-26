@@ -305,3 +305,16 @@ footer {
   color: #e27e7e;
   border: 1px solid #5f2d2d;
 }
+.error-page {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.error-page h1 {
+  font-size: 4rem;
+  margin-bottom: .5rem;
+}
+
+.error-page p {
+  margin-bottom: 1.5rem;
+}

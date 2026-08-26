@@ -305,3 +305,16 @@ footer {
   color: #8b2020;
   border: 1px solid #ddb3b3;
 }
+.error-page {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.error-page h1 {
+  font-size: 4rem;
+  margin-bottom: .5rem;
+}
+
+.error-page p {
+  margin-bottom: 1.5rem;
+}

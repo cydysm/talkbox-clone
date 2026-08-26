@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}404 - {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="error-page">
+  <h1>404</h1>
+  <p>页面不存在或已被移除。</p>
+  <a href="{% url 'blog:post-list' %}" class="button">返回首页</a>
+</div>
+{% endblock %}

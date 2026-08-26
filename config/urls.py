@@ -26,3 +26,11 @@ urlpatterns = [
     path("atom.xml", PostAtomFeed(), name="atom"),
     path("healthz/", healthz, name="healthz"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+handler404 = "config.urls.custom_404"
+
+
+def custom_404(request, exception=None):
+    from django.views.defaults import page_not_found
+
+    return page_not_found(request, exception, template_name="404.html")
