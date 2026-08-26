@@ -14,7 +14,7 @@ ADMIN_URL = "control-panel/"
 sitemaps = {"posts": PostSitemap}
 
 admin_urlpatterns = [
-    path("login/", RateLimitedLoginView.as_view(), name="login"),
+    path("", RateLimitedLoginView.as_view(), name="login"),
     path("", admin.site.urls),
 ]
 
@@ -22,7 +22,8 @@ urlpatterns = [
     path("", include("apps.blog.urls")),
     path("comments/", include("apps.comments.urls")),
     path("media-api/", include("apps.mediafiles.urls")),
-    path(ADMIN_URL, include(admin_urlpatterns)),
+    path(f"{ADMIN_URL}login/", RateLimitedLoginView.as_view()),
+    path(ADMIN_URL, admin.site.urls),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
     path("rss.xml", PostRSSFeed(), name="rss"),
     path("atom.xml", PostAtomFeed(), name="atom"),

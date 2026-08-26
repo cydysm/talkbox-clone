@@ -33,7 +33,7 @@ class AdminOperationsTests(TestCase):
             )
             for number in range(3)
         ]
-        change_url = reverse("admin:comments_comment_changelist")
+        change_url = "/control-panel/comments/comment/"
         response = self.client.post(
             change_url,
             {"action": "approve_comments", "_selected_action": [item.pk for item in comments]},
@@ -57,7 +57,7 @@ class AdminOperationsTests(TestCase):
             original_filename="admin.png",
             file_size=upload.size,
         )
-        response = self.client.get(reverse("admin:mediafiles_uploadedimage_changelist"))
+        response = self.client.get("/control-panel/mediafiles/uploadedimage/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "admin.png")
 

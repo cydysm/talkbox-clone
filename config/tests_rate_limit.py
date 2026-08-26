@@ -42,5 +42,5 @@ class LoginRateLimitTests(TestCase):
         return self.client.post("/control-panel/login/", {
             "username": "admin",
             "password": password,
-            "next": "/admin/",
+            "next": "/control-panel/",
         })

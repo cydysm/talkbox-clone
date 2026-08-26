@@ -30,7 +30,7 @@ class MarkdownAdminEditorTests(TestCase):
     def test_change_form_includes_lightweight_editor_assets(self):
         self.client.force_login(self.superuser)
         response = self.client.get(
-            reverse("admin:blog_post_change", args=[self.post.pk])
+            f"/control-panel/blog/post/{self.post.pk}/change/"
         )
         self.assertContains(response, "talkbox-editor-template")
         self.assertContains(response, "/static/admin/markdown_editor.js")

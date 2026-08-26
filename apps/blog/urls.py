@@ -21,6 +21,6 @@ urlpatterns = [
 # Generic importers can preserve arbitrary source URLs. This fallback runs only
 # after every concrete blog route has failed to match.
 urlpatterns.append(re_path(
-    r"^(?!category/|tag/|search/|rss\.xml$|atom\.xml$|sitemap\.xml$|healthz/|comments/|media-api/|admin/|static/|media/).+$",
+    r"^(?!category/|tag/|search/|rss\.xml$|atom\.xml$|sitemap\.xml$|healthz/|comments/|media-api/|admin/|control-panel/|static/|media/).+$",
     views.legacy_path_redirect,
 ))
