@@ -92,14 +92,24 @@ def post_detail(request, slug):
     cache_key = f"blog:html:{post.pk}:{post.updated_at.timestamp():.0f}"
     rendered_content = cache.get(cache_key)
     if rendered_content is None:
-        rendered_content = markdown.markdown(post.content_markdown, extensions=["extra", "codehilite"])
+        rendered_content = markdown.markdown(
+            post.content_markdown,
+            extensions=["extra", "codehilite"],
+            output_format="html5",
+        )
         rendered_content = registry.apply_hook("transform_html", rendered_content)
         cache.set(cache_key, rendered_content, 3600)
     comments = post.comments.filter(is_approved=True).select_related("parent", "user")
+    view_mode = "markdown" if request.GET.get("view") == "markdown" else "rendered"
     return render(
         request,
         "blog/post_detail.html",
-        {"post": post, "content_html": rendered_content, "comments": comments},
+        {
+            "post": post,
+            "content_html": rendered_content,
+            "comments": comments,
+            "view_mode": view_mode,
+        },
     )
 
 

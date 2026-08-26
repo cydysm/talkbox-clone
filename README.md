@@ -40,6 +40,14 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+本地想快速查看内容时，可以先生成 15 篇演示文章：
+
+```bash
+python manage.py seed_demo_posts
+```
+
+命令会自动使用超级用户作为作者；没有任何用户时会创建 `demo / demo-password-2026` 本地演示账号。重复执行会按文章别名更新，不会产生重复数据。
+
 ### 导入 Emlog 数据
 
 支持官方表结构的 SQLite 文件，或包含 `posts`、`categories`、`tags`、`comments` 四个数组的 JSON：

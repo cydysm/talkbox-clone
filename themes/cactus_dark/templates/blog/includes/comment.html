@@ -1,6 +1,8 @@
 <article class="comment">
-  <strong>{{ node.comment.guest_name }}</strong>
-  <time datetime="{{ node.comment.created_at|date:'c' }}">{{ node.comment.created_at|date:"Y-m-d H:i" }}</time>
+  <header class="comment-header">
+    <strong>{{ node.comment.guest_name }}</strong>
+    <time datetime="{{ node.comment.created_at|date:'c' }}">{{ node.comment.created_at|date:"Y-m-d H:i" }}</time>
+  </header>
   <p>{{ node.comment.body }}</p>
   {% if node.replies %}
     <div class="comment-replies">

@@ -15,15 +15,18 @@
     {% endif %}
     <link rel="alternate" type="application/rss+xml" title="{{ SITE_NAME }} RSS" href="{% url 'rss' %}">
     <link rel="alternate" type="application/atom+xml" title="{{ SITE_NAME }} Atom" href="{% url 'atom' %}">
-  </head>
-  <body>
+    </head>
+    <body>
     <header class="site-header">
       <a href="{% url 'blog:post-list' %}" class="site-title">{{ SITE_NAME }}</a>
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="主导航">
+        <a href="{% url 'blog:post-list' %}">首页</a>
+        {% if request.user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+      </nav>
+      <div class="utility-row">
         <form action="{% url 'blog:search' %}" method="get" class="search-form">
           <input type="search" name="q" value="{{ request.GET.q }}" placeholder="搜索文章" aria-label="搜索文章">
         </form>
-        {% if request.user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
         <form action="{% url 'blog:theme-switch' %}" method="post" class="theme-switcher" aria-label="主题模式" data-preference="{{ THEME_SWITCH_MODE }}">
           {% csrf_token %}
           <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -37,7 +40,7 @@
             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2.75" y="4.25" width="18.5" height="12.5" rx="1.5"/><path d="M8.5 20h7M12 16.75V20"/></svg>
           </button>
         </form>
-      </nav>
+      </div>
     </header>
     <main>
       {% if messages %}
@@ -49,6 +52,8 @@
       {% endif %}
       {% block content %}{% endblock %}
     </main>
-    <footer>Powered by {{ SITE_NAME }}</footer>
+    <footer>
+      <span>Powered by {{ SITE_NAME }}</span>
+    </footer>
   </body>
 </html>

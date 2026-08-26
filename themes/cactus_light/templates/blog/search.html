@@ -6,9 +6,9 @@
   <section class="post-list">
     <h1>搜索{% if query %}：{{ query }}{% endif %}</h1>
     {% for post in posts %}
-      <article>
+      <article class="post-item">
+        {% if post.published_at %}<time datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"d M Y" }}</time>{% endif %}
         <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
-        <p>{{ post.excerpt|default:post.content_markdown|truncatewords:50 }}</p>
       </article>
     {% empty %}
       <p>没有找到相关文章。</p>

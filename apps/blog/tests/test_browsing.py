@@ -47,6 +47,24 @@ class BlogBrowsingTests(TestCase):
         self.assertContains(response, self.post.title)
         self.assertNotContains(response, self.draft.title)
 
+    def test_post_detail_renders_markdown_and_provides_source_view(self):
+        url = reverse("blog:post-detail", args=[self.post.slug])
+        rendered = self.client.get(url)
+
+        self.assertContains(rendered, "<h1>正文</h1>")
+        self.assertContains(rendered, "Markdown 原文")
+        self.assertNotContains(rendered, 'class="post-source"')
+
+        source = self.client.get(url, {"view": "markdown"})
+
+        self.assertContains(source, 'class="post-source"')
+        self.assertContains(source, "# 正文")
+        self.assertContains(source, "返回正文")
+        self.assertNotContains(source, "<h1>正文</h1>")
+
+        fallback = self.client.get(url, {"view": "invalid"})
+        self.assertContains(fallback, "<h1>正文</h1>")
+
     def test_empty_search_returns_all_published_posts(self):
         response = self.client.get(reverse("blog:search"))
         self.assertEqual(response.status_code, 200)
