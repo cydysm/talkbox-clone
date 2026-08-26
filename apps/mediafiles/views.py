@@ -3,11 +3,19 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
 from django.conf import settings
+from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 
 from apps.blog.models import Post
 
 from .models import UploadedImage
+
+
+def get_media_usage_bytes() -> int:
+    media_root = Path(settings.MEDIA_ROOT)
+    if not media_root.exists():
+        return 0
+    return sum(f.stat().st_size for f in media_root.rglob("*") if f.is_file())
 
 
 @staff_member_required
@@ -19,6 +27,8 @@ def upload_images(request):
     errors = []
     files = request.FILES.getlist("images")
     max_files = settings.UPLOAD_MAX_IMAGES
+    total_limit = settings.UPLOAD_TOTAL_LIMIT_GB * 1024 * 1024 * 1024
+    current_usage = get_media_usage_bytes()
 
     if not files:
         return JsonResponse({"errors": ["请选择要上传的图片。"]}, status=400)
@@ -26,6 +36,14 @@ def upload_images(request):
         return JsonResponse(
             {"errors": [f"每次最多上传 {max_files} 张图片。"]},
             status=400,
+        )
+    incoming_size = sum(f.size for f in files)
+    if current_usage + incoming_size > total_limit:
+        limit_gb = settings.UPLOAD_TOTAL_LIMIT_GB
+        used_gb = round(current_usage / (1024 * 1024 * 1024), 2)
+        return JsonResponse(
+            {"errors": [f"媒体总容量已达上限（{used_gb}GB/{limit_gb}GB），无法继续上传。"]},
+            status=507,
         )
 
     for uploaded_file in request.FILES.getlist("images"):

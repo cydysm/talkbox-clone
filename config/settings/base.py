@@ -142,5 +142,33 @@ WATERMARK_TEXT = env("WATERMARK_TEXT", default="")
 WATERMARK_IMAGE_PATH = env("WATERMARK_IMAGE_PATH", default="")
 UPLOAD_MAX_BYTES = env.int("UPLOAD_MAX_MB", default=10) * 1024 * 1024
 UPLOAD_MAX_IMAGES = env.int("UPLOAD_MAX_IMAGES", default=20)
+UPLOAD_TOTAL_LIMIT_GB = env.int("UPLOAD_TOTAL_LIMIT_GB", default=20)
 IMAGE_MAX_DIMENSION = env.int("IMAGE_MAX_DIMENSION", default=8000)
 ALLOWED_IMAGE_FORMATS = ["JPEG", "PNG", "WEBP", "GIF"]
+THUMBNAIL_SIZE = env.tuple("THUMBNAIL_SIZE", default=(240, 240))
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {"format": "{levelname} {asctime} {name} {message}", "style": "{"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "app_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": str(BASE_DIR / "logs" / "talkbox.log"),
+            "maxBytes": 10 * 1024 * 1024,
+            "backupCount": 3,
+            "formatter": "simple",
+        },
+    },
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "INFO"},
+        "talkbox": {"handlers": ["console", "app_file"], "level": "INFO"},
+    },
+    "root": {"handlers": ["console"], "level": "WARNING"},
+}

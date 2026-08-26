@@ -1,4 +1,6 @@
 from io import BytesIO
+from pathlib import Path
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -56,3 +58,17 @@ class UploadSecurityTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("每次最多上传 3 张图片", response.json()["errors"][0])
         self.assertFalse(UploadedImage.objects.exists())
+
+    @override_settings(UPLOAD_TOTAL_LIMIT_GB=0)
+    def test_total_storage_limit_rejects_upload(self):
+        response = self.client.post(self.url, {"images": image_file()})
+        self.assertEqual(response.status_code, 507)
+        self.assertIn("媒体总容量已达上限", response.json()["errors"][0])
+        self.assertFalse(UploadedImage.objects.exists())
+
+    @patch("apps.mediafiles.views.get_media_usage_bytes", return_value=15 * 1024 * 1024 * 1024)
+    @override_settings(UPLOAD_TOTAL_LIMIT_GB=16)
+    def test_near_limit_still_allows_small_upload(self, mock_usage):
+        response = self.client.post(self.url, {"images": image_file()})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(UploadedImage.objects.count(), 1)

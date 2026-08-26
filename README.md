@@ -78,10 +78,26 @@ COMMENT_REPLY_NOTIFY=true
 ```dotenv
 UPLOAD_MAX_MB=10
 UPLOAD_MAX_IMAGES=20
+UPLOAD_TOTAL_LIMIT_GB=20
 IMAGE_MAX_DIMENSION=8000
+THUMBNAIL_SIZE=240,240
 ```
 
 当前支持 JPEG、PNG、WebP 和 GIF。
+
+缩略图自动输出为 WebP，默认 240×240。媒体总容量默认上限 20GB，超限时返回 HTTP 507。
+
+### 备份与恢复
+
+```bash
+# 手动执行
+./scripts/backup.sh
+
+# cron 定时（每天凌晨3点）
+0 3 * * * /app/scripts/backup.sh >> /app/logs/backup.log 2>&1
+```
+
+备份文件保留最近 7 天，可通过 `BACKUP_RETENTION_DAYS` 调整。
 
 ### 插件机制
 

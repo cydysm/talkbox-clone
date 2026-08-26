@@ -36,18 +36,27 @@ class UploadedImage(models.Model):
         if not self.thumbnail:
             self.create_thumbnail()
 
-    def create_thumbnail(self, size=(480, 480)):
+    def create_thumbnail(self, size=None):
+        if size is None:
+            size = getattr(settings, "THUMBNAIL_SIZE", (240, 240))
         with Image.open(self.image.path) as source:
             self.width, self.height = source.size
             watermarked = self.apply_watermark(source)
             watermarked.thumbnail(size, Image.Resampling.LANCZOS)
             buffer = BytesIO()
-            source_format = source.format or "JPEG"
-            if watermarked.mode not in ("RGB", "RGBA") and source_format.upper() == "JPEG":
+            output_format = "WEBP"
+            filename_base = self.image.name.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+
+            if watermarked.mode == "RGBA" or "A" in watermarked.getbands():
                 watermarked = watermarked.convert("RGB")
-            watermarked.save(buffer, format=source_format)
-            filename = self.image.name.rsplit("/", 1)[-1]
-            self.thumbnail.save(f"thumb-{filename}", ContentFile(buffer.getvalue()), save=False)
+                watermarked = watermarked.convert("RGB")
+
+            watermarked.save(buffer, format=output_format, quality=80)
+            self.thumbnail.save(
+                f"thumb-{filename_base}.webp",
+                ContentFile(buffer.getvalue()),
+                save=False,
+            )
         super().save(update_fields=["thumbnail", "width", "height"])
 
     def apply_watermark(self, image):
