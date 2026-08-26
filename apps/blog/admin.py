@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.admin import AdminSite
+from django.utils.translation import gettext_lazy as _
 
 from .models import Category, PluginSetting, Post, ThemeSetting
 
@@ -18,6 +20,10 @@ class PostAdmin(admin.ModelAdmin):
     readonly_fields = ["views", "created_at", "updated_at"]
     date_hierarchy = "published_at"
     actions = ["publish_posts", "unpublish_posts"]
+
+    class Media:
+        css = {"all": ("admin/markdown_editor.css",)}
+        js = ("admin/markdown_editor.js",)
 
     @admin.action(description="发布所选文章")
     def publish_posts(self, request, queryset):

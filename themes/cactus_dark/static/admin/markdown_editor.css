@@ -1,0 +1,29 @@
+.talkbox-editor {
+  margin-bottom: 10px;
+}
+
+.talkbox-toolbar,
+.talkbox-editor label,
+.talkbox-editor progress {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.talkbox-toolbar button {
+  min-width: 34px;
+  margin-right: 5px;
+}
+
+.talkbox-upload input[type="file"] {
+  display: none;
+}
+
+.talkbox-upload {
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
+.talkbox-editor progress {
+  width: 160px;
+  margin-left: 8px;
+}

@@ -1,0 +1,22 @@
+{% extends "admin/change_form.html" %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<template id="talkbox-editor-template">
+  <div class="talkbox-editor">
+    <div class="talkbox-toolbar" role="toolbar" aria-label="Markdown 工具栏">
+      <button type="button" data-action="bold">B</button>
+      <button type="button" data-action="italic">I</button>
+      <button type="button" data-action="heading">H2</button>
+      <button type="button" data-action="quote">&gt;</button>
+      <button type="button" data-action="code">&lt;/&gt;</button>
+      <button type="button" data-action="link">Link</button>
+    </div>
+    <label class="talkbox-upload">
+      <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+      上传图片
+    </label>
+    <progress hidden max="100"></progress>
+  </div>
+</template>
+{% endblock %}
