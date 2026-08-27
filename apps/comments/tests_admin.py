@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse
 
 from apps.blog.models import Post
 from apps.mediafiles.models import UploadedImage
