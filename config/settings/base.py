@@ -17,6 +17,10 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
+
+# 未 hash 的静态引用全部走 ETag 协商缓存：更新即刻生效，
+# 避免 60 秒浏览器缓存造成“改了没生效”的假象（hash 资源仍是一年不可变缓存）。
+WHITENOISE_MAX_AGE = 0
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 INSTALLED_APPS = [
