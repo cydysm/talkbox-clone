@@ -27,13 +27,7 @@
           <li><p>No posts yet.</p></li>
         {% endfor %}
       </ul>
-      {% if page_obj.paginator.num_pages > 1 %}
-        <nav class="pagination" aria-label="文章分页">
-          {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">&#8249;</a>{% endif %}
-          <span class="page-number">第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页</span>
-          {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">&#8250;</a>{% endif %}
-        </nav>
-      {% endif %}
+      {% include "blog/includes/pagination.html" %}
     </div>
   {% else %}
     <section id="about"><p>{{ SITE_DESCRIPTION }}</p></section>
@@ -51,13 +45,7 @@
           <li><p>No posts yet.</p></li>
         {% endfor %}
       </ul>
-      {% if page_obj.paginator.num_pages > 1 %}
-        <nav class="pagination" aria-label="文章分页">
-          {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">&#8249;</a>{% endif %}
-          <span class="page-number">第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页</span>
-          {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">&#8250;</a>{% endif %}
-        </nav>
-      {% endif %}
+      {% include "blog/includes/pagination.html" %}
     </section>
   {% endif %}
 {% endblock %}

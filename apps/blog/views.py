@@ -15,6 +15,23 @@ from .share_targets import prepare_share_targets
 from .theme_preferences import THEME_COOKIE_NAME, THEME_PREFERENCES
 
 
+def _page_window(page_obj, span=2):
+    """带省略号的页码窗口：首末页始终显示，与当前页相距超过 span 页时以 "gap" 占位。"""
+    total = page_obj.paginator.num_pages
+    current = page_obj.number
+    if total <= (span * 2 + 3):
+        return list(range(1, total + 1))
+    pages = {1, total, current}
+    pages.update(range(max(1, current - span), min(total, current + span) + 1))
+    ordered = sorted(pages)
+    window = []
+    for index, number in enumerate(ordered):
+        if index and number - ordered[index - 1] > 1:
+            window.append("gap")
+        window.append(number)
+    return window
+
+
 def render_paginated(request, queryset, template="blog/post_list.html", extra_context=None):
     paginator = Paginator(queryset, settings.POSTS_PER_PAGE)
     page_number = request.GET.get("page", "1")
@@ -22,7 +39,12 @@ def render_paginated(request, queryset, template="blog/post_list.html", extra_co
         page = paginator.page(page_number)
     except (InvalidPage, ValueError):
         page = paginator.page(1)
-    context = {"page_obj": page, "posts": page.object_list, **(extra_context or {})}
+    context = {
+        "page_obj": page,
+        "posts": page.object_list,
+        "page_window": _page_window(page),
+        **(extra_context or {}),
+    }
     return render(request, template, context)
 
 

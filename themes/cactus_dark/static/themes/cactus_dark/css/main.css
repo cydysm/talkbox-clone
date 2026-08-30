@@ -1298,9 +1298,12 @@ article .content .caption {
   width: 100%;
   text-align: center;
 }
-.pagination .page-number {
+.pagination .gap {
   color: #c9cacc;
-  font-size: 0.8rem;
+}
+.pagination .current {
+  color: #2bbc8a;
+  font-weight: bold;
 }
 .pagination a {
   padding: 4px 6px;
@@ -1760,6 +1763,7 @@ main {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.7;
+  vertical-align: middle;
 }
 
 #archive {
@@ -2147,4 +2151,12 @@ article .content table {
 
 .codehilite .gs {
   font-weight: bold;
+}
+
+#writing {
+  min-height: 30rem;
+}
+.pagination .gap,
+.pagination .current {
+  padding: 4px 6px;
 }
