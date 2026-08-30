@@ -47,6 +47,7 @@ class ShareTargetTests(TestCase):
         return request
 
     def test_admin_order_and_visibility(self):
+        ShareTarget.objects.all().delete()
         names = ["x", "copylink"]
         for index, name in enumerate(names):
             ShareTarget.objects.create(name=name, order=index, is_visible=index == 0)
