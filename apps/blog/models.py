@@ -1,8 +1,28 @@
+import uuid
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
+from slugify import slugify
 from taggit.managers import TaggableManager
+
+
+def generate_unique_slug(instance, text, fallback_prefix):
+    """从标题生成唯一 slug；中文由 python-slugify 转拼音，无可转写内容时用时间戳兜底。"""
+    base = slugify(text)[:80].strip("-")
+    if not base:
+        base = f"{fallback_prefix}-{timezone.now():%Y%m%d}-{uuid.uuid4().hex[:4]}"
+    slug = base
+    existing = type(instance).objects.all()
+    if instance.pk:
+        existing = existing.exclude(pk=instance.pk)
+    counter = 2
+    while existing.filter(slug=slug).exists():
+        slug = f"{base}-{counter}"
+        counter += 1
+    return slug
 
 
 class Category(models.Model):
@@ -119,7 +139,7 @@ class Page(models.Model):
     ]
 
     title = models.CharField("标题", max_length=200)
-    slug = models.SlugField("路径", max_length=200, unique=True)
+    slug = models.SlugField("路径", max_length=200, unique=True, blank=True)
     content_markdown = models.TextField("内容（Markdown）")
     status = models.CharField("状态", max_length=10, choices=STATUS_CHOICES, default="draft")
     created_at = models.DateTimeField("创建时间", auto_now_add=True)
@@ -131,6 +151,11 @@ class Page(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(self, self.title, "page")
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
         return reverse("blog:page-detail", args=[self.slug])
@@ -147,7 +172,7 @@ class Post(models.Model):
     ]
 
     title = models.CharField("标题", max_length=200)
-    slug = models.SlugField("别名", max_length=220, unique=True)
+    slug = models.SlugField("别名", max_length=220, unique=True, blank=True)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
@@ -186,6 +211,11 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = generate_unique_slug(self, self.title, "post")
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
         return reverse("blog:post-detail", args=[self.slug])
