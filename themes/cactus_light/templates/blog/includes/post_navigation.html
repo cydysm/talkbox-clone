@@ -2,7 +2,7 @@
   <div id="header-post-bar">
     <span id="nav" aria-label="文章页导航">
       <ul>
-        {% for item in NAV_ITEMS %}<li><a href="{{ item.url }}">{{ item.title }}</a></li>{% endfor %}
+        {% for item in POST_NAV_ITEMS %}<li><a href="{{ item.url }}">{{ item.title }}</a></li>{% endfor %}
         {% if request.user.is_staff %}<li><a href="{% url 'admin:index' %}">Admin</a></li>{% endif %}
       </ul>
     </span>

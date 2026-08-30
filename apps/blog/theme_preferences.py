@@ -39,16 +39,21 @@ def get_nav_items(request):
     items = list(
         NavItem.objects.exclude(visibility="hidden")
         .exclude(visibility="non_home" if is_home else "home")
-        .only("title", "url")[: settings.NAV_MAX_ITEMS]
+        .only("title", "url", "show_in_post_header")[: settings.NAV_MAX_ITEMS]
     )
     if items:
         return items
     return [NavItem(title="首页", url="/")]
 
 
+def get_post_header_nav_items(nav_items):
+    return [item for item in nav_items if getattr(item, "show_in_post_header", True)]
+
+
 def theme_context(request):
     theme_name = get_resolved_theme_name(request)
     preference = get_theme_preference(request)
+    nav_items = get_nav_items(request)
     return {
         "THEME_NAME": theme_name,
         "THEME_STATIC_DIR": f"themes/{theme_name}",
@@ -58,7 +63,8 @@ def theme_context(request):
         "AVAILABLE_THEMES": settings.AVAILABLE_THEMES,
         "SITE_NAME": settings.SITE_NAME,
         "SITE_DESCRIPTION": settings.SITE_DESCRIPTION,
-        "NAV_ITEMS": get_nav_items(request),
+        "NAV_ITEMS": nav_items,
+        "POST_NAV_ITEMS": get_post_header_nav_items(nav_items),
         "ABOUT_TEXT": SiteAbout.current_text(),
         "MARKDOWN_SOURCE_ENABLED": MarkdownSourceSetting.enabled(),
     }

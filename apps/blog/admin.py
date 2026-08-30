@@ -55,8 +55,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(NavItem)
 class NavItemAdmin(admin.ModelAdmin):
-    list_display = ["title", "url", "order", "visibility"]
-    list_editable = ["order", "visibility"]
+    list_display = ["title", "url", "order", "visibility", "show_in_post_header"]
+    list_editable = ["order", "visibility", "show_in_post_header"]
 
 
 @admin.register(Page)

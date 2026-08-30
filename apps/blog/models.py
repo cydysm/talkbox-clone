@@ -203,6 +203,7 @@ class NavItem(models.Model):
     url = models.CharField("链接", max_length=200)
     order = models.PositiveSmallIntegerField("排序", default=0)
     visibility = models.CharField("显示范围", max_length=10, choices=VISIBILITY_CHOICES, default="all")
+    show_in_post_header = models.BooleanField("显示在文章页顶部导航", default=True)
 
     class Meta:
         verbose_name = "导航链接"
