@@ -46,6 +46,15 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+修改任何静态文件（主题 CSS/JS、后台编辑器资源等）后，需要重新收集并重启开发服务器：
+
+```bash
+python manage.py collectstatic --noinput
+# 然后重启 runserver（whitenoise 启动时缓存静态文件）
+```
+
+`staticfiles/` 是 `collectstatic` 生成的汇总目录（源为 `themes/*/static/` 与各 app 的 `static/`），只读、可随时重建、无需提交。
+
 本地想快速查看内容时，可以先生成 15 篇演示文章：
 
 ```bash
