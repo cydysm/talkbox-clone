@@ -4,7 +4,7 @@
   var article = document.querySelector("article.post");
   var content = document.querySelector("article.post .content");
   var menu = document.getElementById("menu");
-  var nav = menu ? menu.querySelector("#nav") : null;
+  var nav = document.querySelector("#header-post-bar #nav");
   var menuIcons = Array.prototype.slice.call(
     document.querySelectorAll("#menu-icon, #menu-icon-tablet")
   );
@@ -61,6 +61,7 @@
   function setMenuOpen(open) {
     if (!menu) { return; }
     menu.style.visibility = open ? "visible" : "hidden";
+    if (nav) { nav.style.display = open ? "" : "none"; }
     menuIcons.forEach(function (icon) {
       icon.setAttribute("aria-expanded", open ? "true" : "false");
       icon.classList.toggle("active", open);
@@ -80,8 +81,8 @@
   function initialize() {
     buildTableOfContents();
 
-    if (menu && window.innerWidth >= 1440) {
-      setMenuOpen(true);
+    if (menu) {
+      setMenuOpen(window.innerWidth >= 1440);
     }
 
     menuIcons.forEach(function (icon) {
