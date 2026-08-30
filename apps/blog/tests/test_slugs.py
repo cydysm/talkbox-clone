@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from ..models import Page, Post
@@ -49,5 +50,5 @@ class SlugGenerationTests(TestCase):
     def test_slug_validation_still_rejects_conflicts(self):
         self._post("已有文章", slug="taken").save()
         post = self._post("另一篇", slug="taken")
-        with self.assertRaises(Exception):
+        with self.assertRaises(ValidationError):
             post.full_clean()

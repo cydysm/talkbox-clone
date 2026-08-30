@@ -1,7 +1,6 @@
 from django.contrib import admin, messages
 from django.db.models import Sum
 from django.utils import timezone
-from django.utils.text import Truncator
 
 from apps.comments.models import Comment
 
