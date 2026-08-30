@@ -722,6 +722,14 @@ body {
   right: 2rem;
   bottom: 2rem;
 }
+#header-post {
+  gap: 1.25rem;
+}
+#header-post-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 #header-post #menu {
   display: flex;
   flex-direction: column;

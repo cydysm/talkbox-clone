@@ -1,20 +1,22 @@
 <div id="header-post">
-  <a id="menu-icon" href="#" role="button" aria-expanded="false" aria-controls="post-menu" aria-label="文章导航">
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-  </a>
-  <a id="menu-icon-tablet" href="#" role="button" aria-expanded="false" aria-controls="post-menu" aria-label="文章导航">
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-  </a>
-  <a id="top-icon-tablet" href="#" style="display:none" aria-label="回到顶部">
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>
-  </a>
-  <span id="menu">
+  <div id="header-post-bar">
     <span id="nav" aria-label="文章页导航">
       <ul>
         {% for item in NAV_ITEMS %}<li><a href="{{ item.url }}">{{ item.title }}</a></li>{% endfor %}
         {% if request.user.is_staff %}<li><a href="{% url 'admin:index' %}">Admin</a></li>{% endif %}
       </ul>
     </span>
+    <a id="menu-icon" href="#" role="button" aria-expanded="false" aria-controls="post-menu" aria-label="文章导航">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </a>
+    <a id="menu-icon-tablet" href="#" role="button" aria-expanded="false" aria-controls="post-menu" aria-label="文章导航">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </a>
+    <a id="top-icon-tablet" href="#" style="display:none" aria-label="回到顶部">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>
+    </a>
+  </div>
+  <span id="menu">
     <span id="actions">
       <ul>
         {% if prev_post %}
