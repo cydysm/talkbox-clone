@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
-    "taggit",
+    "apps.blog.apps.TaggitChineseConfig",
     "apps.blog",
     "apps.comments",
     "apps.mediafiles",
@@ -64,6 +64,8 @@ TEMPLATES = [
                 (
                     "apps.blog.theme_loader.ActiveThemeCachedLoader",
                     [
+                        # filesystem.Loader 在最前，项目根 templates/ 可覆写 admin 模板
+                        "django.template.loaders.filesystem.Loader",
                         "apps.blog.theme_loader.ActiveThemeFilesystemLoader",
                         "django.template.loaders.app_directories.Loader",
                     ],

@@ -1,6 +1,7 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import Sum
 from django.utils import timezone
+from django.utils.text import Truncator
 
 from apps.comments.models import Comment
 
@@ -56,6 +57,7 @@ class PageAdmin(admin.ModelAdmin):
     search_fields = ["title", "content_markdown"]
     prepopulated_fields = {"slug": ["title"]}
     readonly_fields = ["created_at", "updated_at"]
+    view_on_site = True
 
     class Media:
         css = {"all": ("admin/markdown_editor.css",)}
@@ -71,10 +73,19 @@ class PostAdmin(admin.ModelAdmin):
     readonly_fields = ["views", "created_at", "updated_at"]
     date_hierarchy = "published_at"
     actions = ["publish_posts", "unpublish_posts"]
+    fieldsets = [
+        (None, {"fields": ["title", "slug", "excerpt"]}),
+        ("内容", {"fields": ["content_markdown"]}),
+        ("发布", {"fields": ["status", "published_at", "author", "category", "tags"]}),
+        ("元数据", {"fields": ["views", "created_at", "updated_at", "legacy_url"], "classes": ["collapse"]}),
+    ]
 
     class Media:
         css = {"all": ("admin/markdown_editor.css",)}
         js = ("admin/markdown_editor.js",)
+
+    def get_changeform_initial_data(self, request):
+        return {"author": request.user}
 
     @admin.action(description="发布所选文章")
     def publish_posts(self, request, queryset):
@@ -97,7 +108,22 @@ class PostAdmin(admin.ModelAdmin):
 @admin.register(ThemeSetting)
 class ThemeSettingAdmin(admin.ModelAdmin):
     list_display = ["name", "is_active", "updated_at"]
-    list_editable = ["is_active"]
+    actions = ["set_active_theme"]
+
+    @admin.action(description="设为当前主题")
+    def set_active_theme(self, request, queryset):
+        if queryset.count() != 1:
+            self.message_user(request, "请只勾选一个主题进行启用。", level=messages.ERROR)
+            return
+        setting = ThemeSetting.set_active(queryset.first().name)
+        self.message_user(request, f"已启用主题「{setting.name}」。")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        # is_active 通过「设为当前主题」action 切换，不提供逐字段编辑
+        return False
 
 
 @admin.register(PluginSetting)

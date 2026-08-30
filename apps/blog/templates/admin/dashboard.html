@@ -1,9 +1,8 @@
 {% extends "admin/index.html" %}
-
 {% block content %}
 <div class="talkbox-stats">
   <div class="stat-card">
-    <span class="stat-number">{{ total_posts }}</span>
+    <span class="stat-number"><a href="{% url 'admin:blog_post_changelist' %}">{{ total_posts }}</a></span>
     <span class="stat-label">文章总数</span>
     <span class="stat-sub">{{ published_posts }} 已发布 / {{ draft_posts }} 草稿</span>
   </div>
@@ -13,9 +12,9 @@
     <span class="stat-sub">本周新增 {{ posts_this_week }} 篇</span>
   </div>
   <div class="stat-card">
-    <span class="stat-number">{{ total_comments }}</span>
-    <span class="stat-label">评论总数</span>
-    <span class="stat-sub">{{ pending_comments }} 条待审核</span>
+    <span class="stat-number"><a href="{% url 'admin:comments_comment_changelist' %}?is_approved__exact=0">{{ pending_comments }}</a></span>
+    <span class="stat-label">待审核评论</span>
+    <span class="stat-sub">评论总数 {{ total_comments }}</span>
   </div>
 </div>
 
@@ -25,7 +24,8 @@
   {% for comment in recent_comments %}
   <li>
     <strong>{{ comment.guest_name }}</strong> 评论了
-    <a href="{% url 'admin:blog_post_change' comment.post_id %}">{{ comment.post.title|truncatechars:30 }}</a>
+    <a href="{% url 'admin:comments_comment_change' comment.pk %}">《{{ comment.post.title|truncatechars:20 }}》</a>
+    ：{{ comment.body|truncatechars:50 }}
   </li>
   {% endfor %}
 </ul>

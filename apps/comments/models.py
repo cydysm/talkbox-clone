@@ -34,6 +34,8 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ["created_at"]
+        verbose_name = "评论"
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
-        return f"Comment by {self.guest_name} on {self.post_id}"
+        return f"{self.guest_name} 评论了《{self.post.title}》"

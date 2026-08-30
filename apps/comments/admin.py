@@ -1,16 +1,22 @@
 from django.contrib import admin
+from django.utils.text import Truncator
 
 from .models import Comment
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ["guest_name", "post", "parent", "is_approved", "created_at", "ip_address"]
+    list_display = ["guest_name", "short_body", "post", "parent", "is_approved", "created_at", "ip_address"]
     list_filter = ["is_approved", "post", "created_at"]
     search_fields = ["guest_name", "guest_email", "body", "post__title"]
     readonly_fields = ["ip_address", "created_at"]
     autocomplete_fields = ["post", "parent", "user"]
     actions = ["approve_comments", "reject_comments"]
+    ordering = ["-created_at"]
+
+    @admin.display(description="评论内容")
+    def short_body(self, comment):
+        return Truncator(comment.body).chars(50)
 
     @admin.action(description="批准所选评论")
     def approve_comments(self, request, queryset):

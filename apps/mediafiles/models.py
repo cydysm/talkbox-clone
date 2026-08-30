@@ -13,22 +13,26 @@ class UploadedImage(models.Model):
         null=True,
         blank=True,
         related_name="images",
+        verbose_name="所属文章",
     )
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="uploaded_images",
+        verbose_name="上传者",
     )
-    image = models.ImageField(upload_to="images/%Y/%m/")
-    thumbnail = models.ImageField(upload_to="thumbnails/%Y/%m/")
-    original_filename = models.CharField(max_length=255)
-    width = models.PositiveIntegerField(default=0)
-    height = models.PositiveIntegerField(default=0)
-    file_size = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField("图片", upload_to="images/%Y/%m/")
+    thumbnail = models.ImageField("缩略图", upload_to="thumbnails/%Y/%m/")
+    original_filename = models.CharField("原始文件名", max_length=255)
+    width = models.PositiveIntegerField("宽度", default=0)
+    height = models.PositiveIntegerField("高度", default=0)
+    file_size = models.PositiveIntegerField("文件大小", default=0)
+    created_at = models.DateTimeField("创建时间", auto_now_add=True)
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "上传图片"
+        verbose_name_plural = verbose_name
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

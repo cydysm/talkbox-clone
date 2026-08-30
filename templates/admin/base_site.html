@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+  .talkbox-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 0 0 24px;
+  }
+  .talkbox-stats .stat-card {
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .talkbox-stats .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--body-fg);
+  }
+  .talkbox-stats .stat-number a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .talkbox-stats .stat-number a:hover,
+  .talkbox-stats .stat-number a:focus {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+  }
+  .talkbox-stats .stat-label {
+    display: block;
+    margin-top: 2px;
+    color: var(--body-quiet-color);
+  }
+  .talkbox-stats .stat-sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: var(--body-quiet-color);
+  }
+  .talkbox-recent-comments li {
+    margin: 4px 0;
+  }
+  /* 仪表盘不需要「最近动作」，隐藏之 */
+  #recent-actions-module {
+    display: none;
+  }
+</style>
+{% endblock %}

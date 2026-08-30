@@ -37,6 +37,11 @@ class ThemeSetting(models.Model):
     def __str__(self) -> str:
         return f"{self.name}{'（启用）' if self.is_active else ''}"
 
+    def clean(self):
+        available = getattr(settings, "AVAILABLE_THEMES", None)
+        if available and self.name not in available:
+            raise ValidationError({"name": f"未知主题，可选：{', '.join(available)}"})
+
     def save(self, *args, **kwargs):
         if self.is_active:
             ThemeSetting.objects.exclude(pk=self.pk).update(is_active=False)
@@ -176,6 +181,8 @@ class Post(models.Model):
     class Meta:
         ordering = ["-published_at", "-created_at"]
         indexes = [models.Index(fields=["status", "-published_at"])]
+        verbose_name = "文章"
+        verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
         return self.title
