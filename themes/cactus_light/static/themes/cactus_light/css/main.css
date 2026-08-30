@@ -678,87 +678,72 @@ body {
     font-size: 1rem;
   }
 }
+/* ---------------------------------------------------------------
+   文章页固定导航（#header-post）：flex 布局重写。
+   替代官方 float + <br> 结构——各浏览器渲染一致，结构直观可调试。
+   层级：#header-post 纵向 flex；#menu 纵向 flex 右对齐；
+   #nav / #actions / #share 各自横向 flex；#toc 右对齐文本流。
+   --------------------------------------------------------------- */
 #header-post {
   position: fixed;
   top: 2rem;
-  right: 0;
-  display: inline-block;
-  float: right;
+  right: 2rem;
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 #header-post a {
   background: none;
   color: inherit;
   text-decoration: none;
 }
-#header-post a.icon {
-  background: none;
-}
 #header-post a.icon:hover {
   color: #2bbc8a;
 }
-#header-post ol {
-  list-style-type: none;
-}
+#header-post ol,
 #header-post ul {
-  display: inline-block;
   margin: 0;
   padding: 0;
-  list-style-type: none;
+  list-style: none;
 }
-#header-post ul li {
-  display: inline-block;
-  margin-right: 15px;
-  vertical-align: middle;
-}
-#header-post ul li:last-child {
-  margin-right: 0;
-}
-#header-post #menu-icon {
-  float: right;
-  margin-right: 2rem;
-  margin-left: 15px;
-}
-#header-post #menu-icon:hover {
-  color: #d44375;
-}
+#header-post #menu-icon,
 #header-post #menu-icon-tablet {
-  float: right;
-  margin-right: 2rem;
-  margin-left: 15px;
+  color: #363533;
 }
-#header-post #menu-icon-tablet:hover {
+#header-post #menu-icon:hover,
+#header-post #menu-icon-tablet:hover,
+#header-post #top-icon-tablet:hover,
+#header-post .active {
   color: #d44375;
 }
 #header-post #top-icon-tablet {
   position: fixed;
   right: 2rem;
   bottom: 2rem;
-  margin-right: 2rem;
-  margin-left: 15px;
-}
-#header-post #top-icon-tablet:hover {
-  color: #d44375;
-}
-#header-post .active {
-  color: #d44375;
 }
 #header-post #menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.25rem;
   visibility: hidden;
-  margin-right: 2rem;
 }
 #header-post #nav {
   color: #d44375;
-  letter-spacing: 0.01em;
-  font-weight: 200;
-  font-style: normal;
   font-size: 0.8rem;
+  font-weight: 200;
+  letter-spacing: 0.01em;
+}
+#header-post #nav ul,
+#header-post #actions ul {
+  display: flex;
+  align-items: center;
 }
 #header-post #nav ul {
-  line-height: 15px;
+  gap: 0.9rem;
 }
 #header-post #nav ul a {
-  margin-right: 15px;
   color: #d44375;
 }
 #header-post #nav ul a:hover {
@@ -768,52 +753,51 @@ body {
   background-repeat: repeat-x;
 }
 #header-post #nav ul li {
-  border-right: 1px dotted #d44375;
+  display: flex;
+  align-items: center;
 }
-#header-post #nav ul li:last-child {
-  margin-right: 0;
-  border-right: 0;
-}
-#header-post #nav ul li:last-child a {
-  margin-right: 0;
+#header-post #nav ul li + li {
+  border-left: 1px dotted #d44375;
+  padding-left: 0.9rem;
 }
 #header-post #actions {
-  float: right;
-  margin-top: 2rem;
-  margin-right: 2rem;
-  width: 100%;
-  text-align: right;
+  position: relative;
 }
 #header-post #actions ul {
-  display: block;
+  gap: 0.9rem;
+}
+#header-post #actions a {
+  display: inline-flex;
+  align-items: center;
 }
 #header-post #actions .info {
+  position: absolute;
+  top: 50%;
+  right: 100%;
   display: block;
+  margin: 0 2rem 0 0;
   font-style: italic;
+  white-space: nowrap;
+  transform: translateY(-50%);
 }
 #header-post #share {
-  clear: both;
-  padding-top: 1rem;
-  padding-right: 2rem;
-  text-align: right;
+  padding-top: 0.25rem;
 }
-#header-post #share li {
-  display: block;
-  margin: 0;
+#header-post #share ul {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
 }
-#share svg,
-#share-footer svg {
+#header-post #share svg,
+#footer-post #share-footer svg {
   fill: currentcolor;
   stroke: none;
 }
 #header-post #toc {
-  float: right;
-  clear: both;
-  overflow: auto;
-  margin-top: 1rem;
-  padding-right: 2rem;
   max-width: 20em;
   max-height: calc(95vh - 7rem);
+  overflow: auto;
+  font-size: 0.8rem;
   text-align: right;
 }
 #header-post #toc a:hover {
@@ -824,9 +808,8 @@ body {
 }
 #header-post #toc .toc-level-2 {
   color: #363533;
-  font-size: 0.8rem;
 }
-#header-post #toc .toc-level-2:before {
+#header-post #toc .toc-level-2::before {
   color: #d44375;
   content: "#";
 }
@@ -838,9 +821,7 @@ body {
   color: #525252;
   font-size: 0.4rem;
 }
-#header-post #toc .toc-level-5 {
-  display: none;
-}
+#header-post #toc .toc-level-5,
 #header-post #toc .toc-level-6 {
   display: none;
 }
@@ -853,9 +834,7 @@ body {
   }
 }
 @media screen and (max-width: 900px) {
-  #header-post #menu-icon {
-    display: none;
-  }
+  #header-post #menu-icon,
   #header-post #actions {
     display: none;
   }
@@ -866,35 +845,12 @@ body {
   }
 }
 @media screen and (min-width: 900px) {
-  #header-post #menu-icon-tablet {
-    display: none !important;
-  }
+  #header-post #menu-icon-tablet,
   #header-post #top-icon-tablet {
     display: none !important;
   }
 }
-@media screen and (min-width: 1199px) {
-  #header-post #actions {
-    width: auto;
-  }
-  #header-post #actions ul {
-    display: inline-block;
-    float: right;
-  }
-  #header-post #actions {
-    position: relative;
-  }
-  #header-post #actions .info {
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    display: block;
-    margin: 0 2rem 0 0;
-    font-style: italic;
-    white-space: nowrap;
-    transform: translateY(-50%);
-  }
-}
+
 #footer-post {
   position: fixed;
   right: 0;

@@ -15,7 +15,6 @@
         {% if request.user.is_staff %}<li><a href="{% url 'admin:index' %}">Admin</a></li>{% endif %}
       </ul>
     </span>
-    <br>
     <span id="actions">
       <ul>
         {% if prev_post %}
@@ -36,7 +35,6 @@
       <span id="i-top" class="info" style="display:none;">回到顶部</span>
       <span id="i-share" class="info" style="display:none;">分享</span>
     </span>
-    <br>
     <div id="share" style="display:none">
       {% include "blog/includes/share_links.html" %}
     </div>
