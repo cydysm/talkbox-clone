@@ -659,13 +659,18 @@ body {
   #header #nav ul a:hover {
     background: none;
   }
+  #header {
+    position: relative;
+  }
   #header #nav ul li {
     display: none;
     border-right: 0;
   }
+  /* 相对 #header 定位并垂直居中于 logo 行（logo 高 50px） */
   #header #nav ul li.icon {
     position: absolute;
-    top: 77px;
+    top: 25px;
+    transform: translateY(-50%);
     right: 1rem;
     display: inline-block;
   }
@@ -2156,3 +2161,24 @@ article .content table {
 .pagination .current {
   padding: 4px 6px;
 }
+
+/* ---------------------------------------------------------------
+   独立页面（后台「独立页面」）：与首页文章流、文章详情区分的页面式布局。
+   标题区带分隔线与更新时间；不套 article.post，避免触发文章页脚本。
+   --------------------------------------------------------------- */
+article.page {
+  margin-top: 1.5rem;
+}
+article.page .page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, currentcolor 20%, transparent);
+}
+article.page .page-header .meta {
+  margin-top: 0.5rem;
+}
+article.page .page-header .meta * {
+  color: #ccc;
+  font-size: 0.85rem;
+}
+

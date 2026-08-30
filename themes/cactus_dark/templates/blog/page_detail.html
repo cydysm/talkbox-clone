@@ -4,10 +4,13 @@
 {% block description %}{{ SITE_NAME }} - {{ page.title }}{% endblock %}
 {% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
 {% block content %}
-  <article class="post">
-    <header>
+  <article class="page">
+    <header class="page-header">
       <h1 class="posttitle">{{ page.title }}</h1>
+      <div class="meta">
+        <span class="postdate">更新于 <time datetime="{{ page.updated_at|date:'c' }}">{{ page.updated_at|date:"Y-m-d" }}</time></span>
+      </div>
     </header>
-    <div class="content">{{ content_html|safe }}</div>
+    <div class="content page-content">{{ content_html|safe }}</div>
   </article>
 {% endblock %}
