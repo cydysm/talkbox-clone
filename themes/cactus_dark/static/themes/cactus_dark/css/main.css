@@ -2218,3 +2218,24 @@ article.page .page-header .meta * {
   font-size: 0.8rem;
 }
 
+/* ---------------------------------------------------------------
+   消息提示：右侧倒计时徽标（10 秒自动消失）。
+   --------------------------------------------------------------- */
+.message {
+  position: relative;
+  padding-right: 2.6rem;
+}
+.message .message-countdown {
+  position: absolute;
+  top: 50%;
+  right: 0.7rem;
+  transform: translateY(-50%);
+  min-width: 1.4rem;
+  padding: 0.05rem 0.25rem;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: inherit;
+  background: color-mix(in srgb, currentcolor 14%, transparent);
+  opacity: 0.85;
+}
