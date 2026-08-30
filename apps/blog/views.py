@@ -10,7 +10,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from apps.plugins.registry import registry
 
-from .models import Category, Page, Post
+from .models import Category, MarkdownSourceSetting, Page, Post
 from .theme_preferences import THEME_COOKIE_NAME, THEME_PREFERENCES
 
 
@@ -101,6 +101,8 @@ def post_detail(request, slug):
         cache.set(cache_key, rendered_content, 3600)
     comments = post.comments.filter(is_approved=True).select_related("parent", "user")
     view_mode = "markdown" if request.GET.get("view") == "markdown" else "rendered"
+    if view_mode == "markdown" and not MarkdownSourceSetting.enabled():
+        return redirect(post)
     prev_post = next_post = None
     if post.published_at:
         published = (

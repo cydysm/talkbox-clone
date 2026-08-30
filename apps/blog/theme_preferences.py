@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from .models import NavItem, default_theme
+from .models import MarkdownSourceSetting, NavItem, default_theme
 
 THEME_COOKIE_NAME = "visitor_theme"
 SYSTEM_THEME = "system"
@@ -57,4 +57,5 @@ def theme_context(request):
         "SITE_NAME": settings.SITE_NAME,
         "SITE_DESCRIPTION": settings.SITE_DESCRIPTION,
         "NAV_ITEMS": get_nav_items(),
+        "MARKDOWN_SOURCE_ENABLED": MarkdownSourceSetting.enabled(),
     }

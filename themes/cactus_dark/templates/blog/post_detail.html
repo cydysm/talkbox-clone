@@ -12,10 +12,12 @@
     <header>
       <div class="posttitle-row">
         <h1 class="posttitle">{{ post.title }}</h1>
-        {% if view_mode == "markdown" %}
-          <a class="post-source-toggle" href="{{ post.get_absolute_url }}">返回正文</a>
-        {% else %}
-          <a class="post-source-toggle" href="{{ post.get_absolute_url }}?view=markdown">Markdown 原文</a>
+        {% if MARKDOWN_SOURCE_ENABLED %}
+          {% if view_mode == "markdown" %}
+            <a class="post-source-toggle" href="{{ post.get_absolute_url }}">返回正文</a>
+          {% else %}
+            <a class="post-source-toggle" href="{{ post.get_absolute_url }}?view=markdown">Markdown 原文</a>
+          {% endif %}
         {% endif %}
       </div>
       <div class="meta">

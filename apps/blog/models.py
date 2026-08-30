@@ -84,6 +84,33 @@ class ThemeSetting(models.Model):
         return setting
 
 
+class MarkdownSourceSetting(models.Model):
+    is_enabled = models.BooleanField("显示原文按钮", default=True)
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "Markdown 原文视图"
+        verbose_name_plural = verbose_name
+
+    def __str__(self) -> str:
+        return f"Markdown 原文视图（{'启用' if self.is_enabled else '停用'}）"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            existing = MarkdownSourceSetting.objects.first()
+            if existing:
+                existing.is_enabled = self.is_enabled
+                existing.save()
+                self.pk = existing.pk
+                return
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def enabled(cls) -> bool:
+        setting = cls.objects.first()
+        return setting.is_enabled if setting else True
+
+
 class PluginSetting(models.Model):
     name = models.SlugField("插件标识", max_length=100, unique=True)
     is_enabled = models.BooleanField("已启用", default=False)

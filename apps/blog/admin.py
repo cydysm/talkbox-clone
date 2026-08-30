@@ -5,7 +5,15 @@ from django.utils.text import Truncator
 
 from apps.comments.models import Comment
 
-from .models import Category, NavItem, Page, PluginSetting, Post, ThemeSetting
+from .models import (
+    Category,
+    MarkdownSourceSetting,
+    NavItem,
+    Page,
+    PluginSetting,
+    Post,
+    ThemeSetting,
+)
 
 admin.site.site_header = "Talkbox 管理后台"
 admin.site.site_title = "Talkbox"
@@ -130,3 +138,15 @@ class ThemeSettingAdmin(admin.ModelAdmin):
 class PluginSettingAdmin(admin.ModelAdmin):
     list_display = ["name", "is_enabled", "updated_at"]
     list_editable = ["is_enabled"]
+
+
+@admin.register(MarkdownSourceSetting)
+class MarkdownSourceSettingAdmin(admin.ModelAdmin):
+    list_display = ["__str__", "is_enabled", "updated_at"]
+    list_editable = ["is_enabled"]
+
+    def has_add_permission(self, request):
+        return not MarkdownSourceSetting.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
