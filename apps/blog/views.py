@@ -10,7 +10,8 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from apps.plugins.registry import registry
 
-from .models import Category, MarkdownSourceSetting, Page, Post
+from .models import Category, MarkdownSourceSetting, Page, Post, ShareTarget
+from .share_targets import prepare_share_targets
 from .theme_preferences import THEME_COOKIE_NAME, THEME_PREFERENCES
 
 
@@ -111,6 +112,7 @@ def post_detail(request, slug):
         )
         prev_post = published.filter(published_at__lt=post.published_at).order_by("-published_at").first()
         next_post = published.filter(published_at__gt=post.published_at).order_by("published_at").first()
+    share_rows = ShareTarget.objects.filter(is_visible=True).only("name")
     return render(
         request,
         "blog/post_detail.html",
@@ -121,6 +123,7 @@ def post_detail(request, slug):
             "view_mode": view_mode,
             "prev_post": prev_post,
             "next_post": next_post,
+            "share_targets": prepare_share_targets(request, post, share_rows),
         },
     )
 

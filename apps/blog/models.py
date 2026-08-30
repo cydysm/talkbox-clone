@@ -111,6 +111,33 @@ class MarkdownSourceSetting(models.Model):
         return setting.is_enabled if setting else True
 
 
+class ShareTarget(models.Model):
+    name = models.SlugField("目标", max_length=50, unique=True)
+    order = models.PositiveSmallIntegerField("排序", default=0)
+    is_visible = models.BooleanField("显示", default=True)
+
+    class Meta:
+        verbose_name = "分享目标"
+        verbose_name_plural = verbose_name
+        ordering = ["order", "pk"]
+
+    def __str__(self) -> str:
+        return self.label()
+
+    def label(self) -> str:
+        from .share_targets import SHARE_TARGETS
+
+        return SHARE_TARGETS.get(self.name, {}).get("label", self.name)
+
+    def clean(self):
+        from .share_targets import SHARE_TARGETS
+
+        if self.name not in SHARE_TARGETS:
+            raise ValidationError(
+                {"name": f"未知分享目标，可选：{', '.join(SHARE_TARGETS)}"}
+            )
+
+
 class PluginSetting(models.Model):
     name = models.SlugField("插件标识", max_length=100, unique=True)
     is_enabled = models.BooleanField("已启用", default=False)

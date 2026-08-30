@@ -12,6 +12,7 @@ from .models import (
     Page,
     PluginSetting,
     Post,
+    ShareTarget,
     ThemeSetting,
 )
 
@@ -150,3 +151,9 @@ class MarkdownSourceSettingAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(ShareTarget)
+class ShareTargetAdmin(admin.ModelAdmin):
+    list_display = ["label", "name", "order", "is_visible"]
+    list_editable = ["order", "is_visible"]

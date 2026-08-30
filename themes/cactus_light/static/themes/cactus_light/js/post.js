@@ -95,6 +95,36 @@
     bindToggle("toc-footer-toggle", "toc-footer");
     bindToggle("share-footer-toggle", "share-footer");
 
+    var fallbackCopyLink = function () {
+      var input = document.createElement("textarea");
+      input.value = window.location.href;
+      input.setAttribute("readonly", "");
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.select();
+      try { document.execCommand("copy"); } catch (error) {}
+      document.body.removeChild(input);
+    };
+    Array.prototype.forEach.call(
+      document.querySelectorAll("#share a.share-copy, #share-footer a.share-copy"),
+      function (link) {
+        link.addEventListener("click", function (event) {
+          event.preventDefault();
+          var message = link.getAttribute("data-share-message") || "链接已复制到剪贴板。";
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(
+              function () { window.alert(message); },
+              function () { fallbackCopyLink(); window.alert(message); }
+            );
+          } else {
+            fallbackCopyLink();
+            window.alert(message);
+          }
+        });
+      }
+    );
+
     var shareToggle = document.querySelector("#actions .share-toggle");
     var sharePanel = document.getElementById("share");
     if (shareToggle && sharePanel) {
