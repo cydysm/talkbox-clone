@@ -11,6 +11,8 @@ from ..theme_preferences import get_nav_items
 class NavigationTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user("writer", password="test-password")
+        # 迁移会预置「存档」等导航条目；导航相关测试统一从空表开始，保证计数与回退行为可预期。
+        NavItem.objects.all().delete()
         self.other_page = Post.objects.create(
             title="其它页面",
             slug="some-post",
