@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.paginator import InvalidPage, Paginator
 from django.db import models
-from django.db.models import F
+from django.db.models import Count, F
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -85,6 +85,33 @@ def tag_detail(request, tag_id):
         request,
         posts,
         extra_context={"page_title": f"标签：{tag_name}" if tag_name else "标签"},
+    )
+
+
+def archive(request):
+    posts = list(
+        Post.objects.filter(status="published")
+        .prefetch_related("tags")
+        .only("id", "title", "slug", "published_at")
+        .order_by("-published_at", "-created_at")
+    )
+    categories = (
+        Category.objects.annotate(
+            total=Count("posts", filter=models.Q(posts__status="published"))
+        )
+        .filter(total__gt=0)
+        .order_by("-total", "name")
+    )
+    tag_counts = {}
+    for post in posts:
+        for tag in post.tags.all():
+            entry = tag_counts.setdefault(tag.id, {"tag": tag, "total": 0})
+            entry["total"] += 1
+    tags = sorted(tag_counts.values(), key=lambda entry: (-entry["total"], entry["tag"].name))
+    return render(
+        request,
+        "blog/archive.html",
+        {"posts": posts, "categories": categories, "tags": tags},
     )
 
 

@@ -6,6 +6,7 @@ app_name = "blog"
 
 urlpatterns = [
     path("", views.post_list_or_legacy_redirect, name="post-list"),
+    path("archive/", views.archive, name="archive"),
     path("category/<slug:slug>/", views.category_detail, name="category-detail"),
     path("tag/<int:tag_id>/", views.tag_detail, name="tag-detail"),
     path("search/", views.search_posts, name="search"),
@@ -16,7 +17,7 @@ urlpatterns = [
     path("post-<int:legacy_id>.html", views.legacy_post_redirect),
     path("<int:legacy_id>.html", views.legacy_post_redirect),
     re_path(
-        r"^(?!category/|tag/|search/|theme/|post/|comments/|media-api/|admin/|control-panel/|static/|media/|healthz/)(?P<slug>[\w-]+)/$",
+        r"^(?!category/|tag/|search/|theme/|archive/|post/|comments/|media-api/|admin/|control-panel/|static/|media/|healthz/)(?P<slug>[\w-]+)/$",
         views.page_detail,
         name="page-detail",
     ),
@@ -26,6 +27,6 @@ urlpatterns = [
 # Generic importers can preserve arbitrary source URLs. This fallback runs only
 # after every concrete blog route has failed to match.
 urlpatterns.append(re_path(
-    r"^(?!category/|tag/|search/|rss\.xml$|atom\.xml$|sitemap\.xml$|healthz/|comments/|media-api/|admin/|control-panel/|static/|media/).+$",
+    r"^(?!category/|tag/|search/|archive/|rss\.xml$|atom\.xml$|sitemap\.xml$|healthz/|comments/|media-api/|admin/|control-panel/|static/|media/).+$",
     views.legacy_path_redirect,
 ))

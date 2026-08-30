@@ -227,7 +227,7 @@ class NavItem(models.Model):
 
 class Page(models.Model):
     RESERVED_SLUGS = {
-        "post", "category", "tag", "search", "theme", "page",
+        "post", "category", "tag", "search", "theme", "page", "archive",
         "admin", "control-panel", "static", "media", "comments",
         "media-api", "healthz",
     }

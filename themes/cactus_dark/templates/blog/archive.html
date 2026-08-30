@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}存档 | {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ SITE_NAME }} - 全部文章存档{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
+{% block content %}
+  <div id="archive">
+    <h1>存档</h1>
+    <p class="archive-summary">共 {{ posts|length }} 篇</p>
+    <ul class="post-list">
+      {% for post in posts %}
+        {% if post.published_at %}{% ifchanged post.published_at.year %}<li class="post-year"><h2>{{ post.published_at.year }}</h2></li>{% endifchanged %}{% endif %}
+        <li class="post-item">
+          <div class="meta">
+            {% if post.published_at %}<time datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"Y-m-d" }}</time>{% endif %}
+          </div>
+          <span><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></span>
+        </li>
+      {% empty %}
+        <li><p>还没有文章。</p></li>
+      {% endfor %}
+    </ul>
+    <section class="archive-map">
+      <div class="archive-section">
+        <h2>分类</h2>
+        <ul>
+          {% for category in categories %}
+            <li><a href="{% url 'blog:category-detail' category.slug %}">{{ category.name }}</a><span class="archive-count">{{ category.total }}</span></li>
+          {% empty %}
+            <li><span class="archive-count">暂无分类</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="archive-section">
+        <h2>标签</h2>
+        <ul>
+          {% for entry in tags %}
+            <li><a href="{% url 'blog:tag-detail' entry.tag.id %}">#{{ entry.tag.name }}</a><span class="archive-count">{{ entry.total }}</span></li>
+          {% empty %}
+            <li><span class="archive-count">暂无标签</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+  </div>
+{% endblock %}
