@@ -22,6 +22,7 @@
     {% block site_header %}
     <header id="header">
       <a href="{% url 'blog:post-list' %}">
+        <img id="logo" alt="" src="/static/{{ THEME_STATIC_DIR }}/img/logo.png">
         <div id="title"><h1>{{ SITE_NAME }}</h1></div>
       </a>
       <div id="nav" aria-label="主导航">
