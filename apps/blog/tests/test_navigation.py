@@ -1,15 +1,26 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
-from ..models import NavItem
+from ..models import NavItem, Post
 from ..theme_preferences import get_nav_items
 
 
 class NavigationTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user("writer", password="test-password")
+        self.other_page = Post.objects.create(
+            title="其它页面",
+            slug="some-post",
+            author=self.user,
+            content_markdown="正文",
+            status="published",
+        ).get_absolute_url()
+
     def test_empty_nav_falls_back_to_home(self):
-        items = get_nav_items()
+        items = get_nav_items(self.client.get("/").wsgi_request)
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0].title, "首页")
         self.assertEqual(items[0].url, "/")
@@ -23,9 +34,23 @@ class NavigationTests(TestCase):
         self.assertLess(response.content.decode().index(">关于</a>"), response.content.decode().index(">归档</a>"))
 
     def test_hidden_nav_items_are_not_rendered(self):
-        NavItem.objects.create(title="关于", url="/about/", is_visible=False)
+        NavItem.objects.create(title="关于", url="/about/", visibility="hidden")
         response = self.client.get(reverse("blog:post-list"))
         self.assertNotContains(response, ">关于</a>")
+
+    def test_home_only_item_hidden_on_other_pages(self):
+        NavItem.objects.create(title="欢迎", url="/", visibility="home")
+        response = self.client.get(reverse("blog:post-list"))
+        self.assertContains(response, ">欢迎</a>")
+        other = self.client.get(self.other_page)
+        self.assertNotContains(other, ">欢迎</a>")
+
+    def test_non_home_only_item_hidden_on_homepage(self):
+        NavItem.objects.create(title="关于", url="/about/", visibility="non_home")
+        response = self.client.get(reverse("blog:post-list"))
+        self.assertNotContains(response, ">关于</a>")
+        other = self.client.get(self.other_page)
+        self.assertContains(other, ">关于</a>")
 
     def test_nav_items_are_capped(self):
         for index in range(settings.NAV_MAX_ITEMS):
@@ -37,7 +62,7 @@ class NavigationTests(TestCase):
     def test_cap_ignores_hidden_items(self):
         for index in range(settings.NAV_MAX_ITEMS):
             NavItem.objects.create(title=f"菜单{index}", url=f"/menu-{index}/")
-        hidden = NavItem.objects.create(title="隐藏项", url="/hidden/", is_visible=False)
+        hidden = NavItem.objects.create(title="隐藏项", url="/hidden/", visibility="hidden")
         hidden.title = "隐藏项改名"
         hidden.full_clean()
 

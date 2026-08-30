@@ -34,9 +34,11 @@ def get_switch_mode(request):
     return "dark"
 
 
-def get_nav_items():
+def get_nav_items(request):
+    is_home = request.path == "/"
     items = list(
-        NavItem.objects.filter(is_visible=True)
+        NavItem.objects.exclude(visibility="hidden")
+        .exclude(visibility="non_home" if is_home else "home")
         .only("title", "url")[: settings.NAV_MAX_ITEMS]
     )
     if items:
@@ -56,6 +58,6 @@ def theme_context(request):
         "AVAILABLE_THEMES": settings.AVAILABLE_THEMES,
         "SITE_NAME": settings.SITE_NAME,
         "SITE_DESCRIPTION": settings.SITE_DESCRIPTION,
-        "NAV_ITEMS": get_nav_items(),
+        "NAV_ITEMS": get_nav_items(request),
         "MARKDOWN_SOURCE_ENABLED": MarkdownSourceSetting.enabled(),
     }

@@ -156,10 +156,17 @@ def default_theme() -> str:
 
 
 class NavItem(models.Model):
+    VISIBILITY_CHOICES = [
+        ("all", "所有页面"),
+        ("home", "仅主页"),
+        ("non_home", "仅其它页面"),
+        ("hidden", "隐藏"),
+    ]
+
     title = models.CharField("标题", max_length=50)
     url = models.CharField("链接", max_length=200)
     order = models.PositiveSmallIntegerField("排序", default=0)
-    is_visible = models.BooleanField("显示", default=True)
+    visibility = models.CharField("显示范围", max_length=10, choices=VISIBILITY_CHOICES, default="all")
 
     class Meta:
         verbose_name = "导航链接"
@@ -170,14 +177,14 @@ class NavItem(models.Model):
         return f"{self.title}（{self.url}）"
 
     def clean(self):
-        if not self.is_visible:
+        if self.visibility == "hidden":
             return
-        existing = NavItem.objects.filter(is_visible=True)
+        existing = NavItem.objects.exclude(visibility="hidden")
         if self.pk:
             existing = existing.exclude(pk=self.pk)
         if existing.count() >= settings.NAV_MAX_ITEMS:
             raise ValidationError(
-                {"is_visible": f"导航链接最多显示 {settings.NAV_MAX_ITEMS} 个。"}
+                {"visibility": f"导航链接最多显示 {settings.NAV_MAX_ITEMS} 个。"}
             )
 
 
