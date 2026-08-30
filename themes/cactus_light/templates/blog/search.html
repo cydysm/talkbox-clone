@@ -3,22 +3,27 @@
 {% block title %}{% if query %}搜索：{{ query }}{% else %}搜索{% endif %} | {{ SITE_NAME }}{% endblock %}
 
 {% block content %}
-  <section class="post-list">
+  <div id="archive">
     <h1>搜索{% if query %}：{{ query }}{% endif %}</h1>
-    {% for post in posts %}
-      <article class="post-item">
-        {% if post.published_at %}<time datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"d M Y" }}</time>{% endif %}
-        <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
-      </article>
-    {% empty %}
-      <p>没有找到相关文章。</p>
-    {% endfor %}
+    <ul class="post-list">
+      {% for post in posts %}
+        {% if post.published_at %}{% ifchanged post.published_at.year %}<li class="post-year"><h2>{{ post.published_at.year }}</h2></li>{% endifchanged %}{% endif %}
+        <li class="post-item">
+          <div class="meta">
+            {% if post.published_at %}<time datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"Y-m-d" }}</time>{% endif %}
+          </div>
+          <span><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></span>
+        </li>
+      {% empty %}
+        <li><p>没有找到相关文章。</p></li>
+      {% endfor %}
+    </ul>
     {% if page_obj.paginator.num_pages > 1 %}
       <nav class="pagination" aria-label="搜索分页">
-        {% if page_obj.has_previous %}<a href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">上一页</a>{% endif %}
-        <span>第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页</span>
-        {% if page_obj.has_next %}<a href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}">下一页</a>{% endif %}
+        {% if page_obj.has_previous %}<a href="?q={{ query|urlencode }}&page={{ page_obj.previous_page_number }}">&#8249;</a>{% endif %}
+        <span class="page-number">第 {{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 页</span>
+        {% if page_obj.has_next %}<a href="?q={{ query|urlencode }}&page={{ page_obj.next_page_number }}">&#8250;</a>{% endif %}
       </nav>
     {% endif %}
-  </section>
+  </div>
 {% endblock %}

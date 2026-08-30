@@ -1,0 +1,66 @@
+<div id="header-post">
+  <a id="menu-icon" href="#" role="button" aria-expanded="false" aria-controls="post-menu" aria-label="文章导航">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </a>
+  <a id="menu-icon-tablet" href="#" role="button" aria-expanded="false" aria-controls="post-menu" aria-label="文章导航">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </a>
+  <a id="top-icon-tablet" href="#" style="display:none" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>
+  </a>
+  <span id="menu">
+    <span id="nav" aria-label="文章页导航">
+      <ul>
+        {% for item in NAV_ITEMS %}<li><a href="{{ item.url }}">{{ item.title }}</a></li>{% endfor %}
+        {% if request.user.is_staff %}<li><a href="{% url 'admin:index' %}">Admin</a></li>{% endif %}
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        {% if prev_post %}
+          <li><a class="icon nav-prev" aria-label="上一篇" href="{{ prev_post.get_absolute_url }}"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a></li>
+        {% endif %}
+        {% if next_post %}
+          <li><a class="icon nav-next" aria-label="下一篇" href="{{ next_post.get_absolute_url }}"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></a></li>
+        {% endif %}
+        <li>
+          <a class="icon back-to-top" href="#" aria-label="回到顶部">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M5 15l7-7 7 7"/></svg>
+          </a>
+        </li>
+        <li><a class="icon share-toggle" aria-label="分享" href="#"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.2 10.8l7.6-4.6M8.2 13.2l7.6 4.6"/></svg></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">回到顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享</span>
+    </span>
+    <br>
+    <div id="share" style="display:none">
+      {% include "blog/includes/share_links.html" %}
+    </div>
+    <div id="toc"></div>
+  </span>
+</div>
+
+<div id="footer-post-container">
+  <div id="footer-post">
+    <div id="nav-footer" style="display:none">
+      <ul>
+        {% for item in NAV_ITEMS %}<li><a href="{{ item.url }}">{{ item.title }}</a></li>{% endfor %}
+        {% if request.user.is_staff %}<li><a href="{% url 'admin:index' %}">Admin</a></li>{% endif %}
+      </ul>
+    </div>
+    <div id="toc-footer" style="display:none"></div>
+    <div id="share-footer" style="display:none">
+      {% include "blog/includes/share_links.html" %}
+    </div>
+    <div id="actions-footer">
+      <a id="menu-footer" class="icon" href="#">Menu</a>
+      <a id="toc-footer-toggle" class="icon" href="#">TOC</a>
+      <a id="share-footer-toggle" class="icon" href="#">分享<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.2 10.8l7.6-4.6M8.2 13.2l7.6 4.6"/></svg></a>
+      <a id="top" style="display:none" class="icon back-to-top" href="#">Top</a>
+    </div>
+  </div>
+</div>

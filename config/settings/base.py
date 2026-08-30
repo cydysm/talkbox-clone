@@ -126,6 +126,7 @@ SITE_NAME = env("SITE_NAME")
 SITE_DESCRIPTION = env("SITE_DESCRIPTION", default="Talkbox Clone - Python blog")
 FEED_LIMIT = env.int("FEED_LIMIT", default=20)
 POSTS_PER_PAGE = env.int("POSTS_PER_PAGE", default=10)
+NAV_MAX_ITEMS = env.int("NAV_MAX_ITEMS", default=8)
 
 EMAIL_BACKEND = env(
     "EMAIL_BACKEND",

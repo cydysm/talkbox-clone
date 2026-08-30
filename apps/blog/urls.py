@@ -15,6 +15,11 @@ urlpatterns = [
     path("post/<str:legacy_alias>", views.legacy_alias_redirect),
     path("post-<int:legacy_id>.html", views.legacy_post_redirect),
     path("<int:legacy_id>.html", views.legacy_post_redirect),
+    re_path(
+        r"^(?!category/|tag/|search/|theme/|post/|comments/|media-api/|admin/|control-panel/|static/|media/|healthz/)(?P<slug>[\w-]+)/$",
+        views.page_detail,
+        name="page-detail",
+    ),
 ]
 
 

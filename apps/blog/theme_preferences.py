@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from .models import default_theme
+from .models import NavItem, default_theme
 
 THEME_COOKIE_NAME = "visitor_theme"
 SYSTEM_THEME = "system"
@@ -34,6 +34,16 @@ def get_switch_mode(request):
     return "dark"
 
 
+def get_nav_items():
+    items = list(
+        NavItem.objects.filter(is_visible=True)
+        .only("title", "url")[: settings.NAV_MAX_ITEMS]
+    )
+    if items:
+        return items
+    return [NavItem(title="首页", url="/")]
+
+
 def theme_context(request):
     theme_name = get_resolved_theme_name(request)
     preference = get_theme_preference(request)
@@ -45,4 +55,6 @@ def theme_context(request):
         "SYSTEM_THEME": SYSTEM_THEME,
         "AVAILABLE_THEMES": settings.AVAILABLE_THEMES,
         "SITE_NAME": settings.SITE_NAME,
+        "SITE_DESCRIPTION": settings.SITE_DESCRIPTION,
+        "NAV_ITEMS": get_nav_items(),
     }

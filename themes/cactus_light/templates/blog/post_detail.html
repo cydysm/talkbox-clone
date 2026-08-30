@@ -4,32 +4,36 @@
 
 {% block title %}{{ post.title }} | {{ SITE_NAME }}{% endblock %}
 {% block description %}{{ post.excerpt }}{% endblock %}
-{% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{{ post.get_absolute_url }}</link>{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
+{% block site_header %}{% endblock %}
+{% block article_ui %}{% include "blog/includes/post_navigation.html" %}{% endblock %}
 {% block content %}
   <article class="post">
-    <header class="post-header">
-      <h1>{{ post.title }}</h1>
-      <p class="post-meta">
-        {% if post.published_at %}<time datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"d M Y" }}</time>{% endif %}
-        {% if post.author %}<span>{{ post.author.username }}</span>{% endif %}
-        {% if post.category %}<a href="{% url 'blog:category-detail' post.category.slug %}">{{ post.category.name }}</a>{% endif %}
-        {% for tag in post.tags.all %}<a class="tag-link" href="{% url 'blog:tag-detail' tag.pk %}">{{ tag.name }}</a>{% endfor %}
-      </p>
+    <header>
+      <div class="posttitle-row">
+        <h1 class="posttitle">{{ post.title }}</h1>
+        {% if view_mode == "markdown" %}
+          <a class="post-source-toggle" href="{{ post.get_absolute_url }}">返回正文</a>
+        {% else %}
+          <a class="post-source-toggle" href="{{ post.get_absolute_url }}?view=markdown">Markdown 原文</a>
+        {% endif %}
+      </div>
+      <div class="meta">
+        {% if post.author %}<span class="author">{{ post.author.username }}</span>{% endif %}
+        <div class="postdate">
+          {% if post.published_at %}<time datetime="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"Y-m-d" }}</time>{% endif %}
+        </div>
+        {% if post.category %}<div class="article-category"><svg class="meta-icon" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><a class="category-link" href="{% url 'blog:category-detail' post.category.slug %}">{{ post.category.name }}</a></div>{% endif %}
+        {% for tag in post.tags.all %}<div class="article-tag"><svg class="meta-icon" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M21.41 11.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9a2 2 0 0 0 2.82 0l7-7a2 2 0 0 0 0-2.84zM7 9a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg><a class="tag-link" href="{% url 'blog:tag-detail' tag.pk %}">{{ tag.name }}</a></div>{% endfor %}
+      </div>
     </header>
-    <div class="post-viewbar">
-      {% if view_mode == "markdown" %}
-        <a class="post-view-button" href="{{ post.get_absolute_url }}">返回正文</a>
-      {% else %}
-        <a class="post-view-button" href="{{ post.get_absolute_url }}?view=markdown">Markdown 原文</a>
-      {% endif %}
-    </div>
     {% if view_mode == "markdown" %}
       <pre class="post-source" tabindex="0"><code>{{ post.content_markdown }}</code></pre>
     {% else %}
-      <div class="post-content">{{ content_html|safe }}</div>
+      <div class="content">{{ content_html|safe }}</div>
     {% endif %}
   </article>
-  <section class="comments" id="comments">
+  <section class="blog-post-comments" id="comments">
     <h2 class="section-heading">评论</h2>
     {% with tree=comments|build_comment_tree %}
       {% for node in tree %}
@@ -59,3 +63,4 @@
     <button type="submit">提交评论</button>
   </form>
 {% endblock %}
+{% block scripts %}<script src="/static/{{ THEME_STATIC_DIR }}/js/post.js" defer></script>{% endblock %}

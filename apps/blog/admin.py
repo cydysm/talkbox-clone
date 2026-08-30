@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from apps.comments.models import Comment
 
-from .models import Category, PluginSetting, Post, ThemeSetting
+from .models import Category, NavItem, Page, PluginSetting, Post, ThemeSetting
 
 admin.site.site_header = "Talkbox 管理后台"
 admin.site.site_title = "Talkbox"
@@ -41,6 +41,25 @@ admin.site.index_template = "admin/dashboard.html"
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ["name", "slug"]
     prepopulated_fields = {"slug": ["name"]}
+
+
+@admin.register(NavItem)
+class NavItemAdmin(admin.ModelAdmin):
+    list_display = ["title", "url", "order", "is_visible"]
+    list_editable = ["order", "is_visible"]
+
+
+@admin.register(Page)
+class PageAdmin(admin.ModelAdmin):
+    list_display = ["title", "slug", "status", "updated_at"]
+    list_filter = ["status"]
+    search_fields = ["title", "content_markdown"]
+    prepopulated_fields = {"slug": ["title"]}
+    readonly_fields = ["created_at", "updated_at"]
+
+    class Media:
+        css = {"all": ("admin/markdown_editor.css",)}
+        js = ("admin/markdown_editor.js",)
 
 
 @admin.register(Post)

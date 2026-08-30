@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from taggit.managers import TaggableManager
@@ -73,6 +74,65 @@ class PluginSetting(models.Model):
 
 def default_theme() -> str:
     return ThemeSetting.active_name()
+
+
+class NavItem(models.Model):
+    title = models.CharField("标题", max_length=50)
+    url = models.CharField("链接", max_length=200)
+    order = models.PositiveSmallIntegerField("排序", default=0)
+    is_visible = models.BooleanField("显示", default=True)
+
+    class Meta:
+        verbose_name = "导航链接"
+        verbose_name_plural = verbose_name
+        ordering = ["order", "pk"]
+
+    def __str__(self) -> str:
+        return f"{self.title}（{self.url}）"
+
+    def clean(self):
+        if not self.is_visible:
+            return
+        existing = NavItem.objects.filter(is_visible=True)
+        if self.pk:
+            existing = existing.exclude(pk=self.pk)
+        if existing.count() >= settings.NAV_MAX_ITEMS:
+            raise ValidationError(
+                {"is_visible": f"导航链接最多显示 {settings.NAV_MAX_ITEMS} 个。"}
+            )
+
+
+class Page(models.Model):
+    RESERVED_SLUGS = {
+        "post", "category", "tag", "search", "theme", "page",
+        "admin", "control-panel", "static", "media", "comments",
+        "media-api", "healthz",
+    }
+    STATUS_CHOICES = [
+        ("draft", "草稿"),
+        ("published", "已发布"),
+    ]
+
+    title = models.CharField("标题", max_length=200)
+    slug = models.SlugField("路径", max_length=200, unique=True)
+    content_markdown = models.TextField("内容（Markdown）")
+    status = models.CharField("状态", max_length=10, choices=STATUS_CHOICES, default="draft")
+    created_at = models.DateTimeField("创建时间", auto_now_add=True)
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "独立页面"
+        verbose_name_plural = verbose_name
+
+    def __str__(self) -> str:
+        return self.title
+
+    def get_absolute_url(self) -> str:
+        return reverse("blog:page-detail", args=[self.slug])
+
+    def clean(self):
+        if self.slug in self.RESERVED_SLUGS:
+            raise ValidationError({"slug": f"该路径为系统保留字：{', '.join(sorted(self.RESERVED_SLUGS))}"})
 
 
 class Post(models.Model):
