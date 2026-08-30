@@ -967,6 +967,10 @@ body {
   background: #cdcac6;
   text-align: center;
 }
+#footer-post #actions-footer a svg {
+  vertical-align: -3px;
+  margin-left: 0.3rem;
+}
 #footer-post #share-footer ul {
   display: table;
   margin: 0;
