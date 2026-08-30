@@ -4,7 +4,7 @@
 
 ## 功能
 
-- Django Admin 管理文章与分类
+- Django Admin 管理文章、分类、评论、媒体、导航链接和独立页面
 - Markdown 文章渲染和 Redis 渲染缓存
 - 多标签（django-taggit）
 - 树形评论模型和评论审核状态
@@ -17,11 +17,16 @@
 - 作者与后台用户可预览草稿，访客不可访问
 - 评论蜜罐防护和 IP 提交间隔限制
 - `/healthz/` 应用、数据库和缓存健康检查
-- Cactus Dark 主题模板
+- 仿 Cactus 主题模板（深色/浅色两套）
 - 分类页、标签页和站内搜索
 - 文章列表统一分页，每页数量可配置
 - RSS 与 Atom 订阅源
 - 后台多模板切换，当前支持 Cactus Dark 和 Cactus Light
+- 访客可切换深/浅色或跟随系统，偏好保存在 Cookie 中
+- 文章页固定导航：上一篇/下一篇、回到顶部和分享面板（Facebook/X/LinkedIn/Reddit/HN/邮件）
+- 文章支持 Markdown 原文视图（`?view=markdown`）
+- 后台可管理站点导航链接（数量上限可配置）
+- 后台可编辑独立页面，发布后以顶级路径访问（如 `/about/`）
 - Emlog JSON/SQLite 导入：文章、分类、标签和评论树
 - 其他博客 `talkbox-generic` v1 JSON 导入：文章、分类、标签和评论树
 - Emlog 旧链接 301 重定向
@@ -79,13 +84,13 @@ COMMENT_REPLY_NOTIFY=true
 
 ### 切换主题
 
-进入 Django Admin 的 **Theme settings**，把目标主题设为启用；同一时间只会有一个主题生效。默认主题由 `.env` 中的 `THEME=cactus_dark` 控制。
+进入 Django Admin 的 **主题设置**，把目标主题设为启用；同一时间只会有一个主题生效。默认主题由 `.env` 中的 `THEME=cactus_dark` 控制。
 
-访客可以通过页面顶部的深/浅图标切换个人偏好，选择会保存在浏览器 Cookie 中；显示器图标用于恢复跟随系统深浅色。全局 **Theme settings** 决定未选择偏好时的默认主题。
+访客可以通过页脚右侧的深/浅图标切换个人偏好，选择会保存在浏览器 Cookie 中；显示器图标用于恢复跟随系统深浅色。全局 **主题设置** 决定未选择偏好时的默认主题。
 
 ### Admin 入口
 
-公共页面的 `Admin` 链接只对已登录且具有 `is_staff=True` 的用户显示；匿名访客和普通注册用户不会看到该入口，但 Django Admin 路由 `/admin/` 本身仍然存在。管理员可直接访问 `/admin/` 登录或管理站点。
+管理后台地址为 `/control-panel/`（可在 `config/urls.py` 中通过 `ADMIN_URL` 修改）。公共页面（顶部导航、页脚和文章页菜单）的 `Admin` 链接只对已登录且具有 `is_staff=True` 的用户显示；匿名访客和普通注册用户不会看到该入口，直接访问后台地址会先进入登录页。
 
 ### 图片上传限制
 
@@ -135,7 +140,13 @@ THUMBNAIL_SIZE=240,240
 - 可选 `plugin.py`：定义 `transform_markdown` 或 `transform_html` 钩子
 - 可选 `requirements.txt`：声明额外 Python 依赖；启动时会校验当前环境，缺失则拒绝启动，不会静默加载半可用插件
 
-在 Django Admin 的 **Plugin settings** 中启用插件。仓库内置 `Markdown Footnote` 示例，会把文章 HTML 中的 `[FOOTNOTE]` 替换为页脚说明。
+在 Django Admin 的 **插件设置** 中启用插件。仓库内置 `Markdown Footnote` 示例，会把文章 HTML 中的 `[FOOTNOTE]` 替换为页脚说明。
+
+### 站点导航与独立页面
+
+后台 **导航链接** 管理站点导航（顶部、文章页菜单和页脚共用一处配置），每项包含标题、链接（站内路径或完整 URL）和排序，最多同时显示 8 个，可在 `.env` 用 `NAV_MAX_ITEMS` 调整；没有任何导航项时自动显示「首页」。
+
+后台 **独立页面** 用于创建非文章内容（如「关于」）：填写标题、路径（如 `about`）和 Markdown 内容，发布后通过顶级路径访问（如 `/about/`）。路径不能使用系统保留字（`search`、`post`、`admin` 等）；草稿仅 staff 可预览。页脚会在导航项之后固定附带 RSS 链接。
 
 ### 内容浏览
 
@@ -144,6 +155,9 @@ THUMBNAIL_SIZE=240,240
 - `/category/<slug>/`：按分类筛选已发布文章
 - `/tag/<id>/`：按标签筛选已发布文章
 - `/search/?q=关键词`：搜索标题、摘要、正文和标签
+- `/<slug>/`：后台创建的独立页面
+
+文章详情页右上角提供上一篇/下一篇、回到顶部和分享；访问 `文章地址?view=markdown` 可查看 Markdown 原文。
 
 草稿始终不会出现在这些页面中。
 
@@ -203,4 +217,4 @@ docker compose exec web python manage.py createsuperuser
 
 ## 当前状态
 
-所有核心功能已完成：博客内容管理、评论树、媒体上传与水印、多主题切换（含访客偏好）、通用导入器、插件依赖隔离、登录限速、异步邮件通知、一键升级/恢复、CI 构建验证与依赖安全审计。
+所有核心功能已完成：博客内容管理、评论树、媒体上传与水印、多主题切换（含访客偏好）、后台可管理导航与独立页面、通用导入器、插件依赖隔离、登录限速、异步邮件通知、一键升级/恢复、CI 构建验证与依赖安全审计。
