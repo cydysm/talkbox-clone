@@ -26,7 +26,7 @@ class Comment(models.Model):
         verbose_name="用户",
     )
     guest_name = models.CharField("昵称", max_length=80)
-    guest_email = models.EmailField("邮箱")
+    guest_email = models.EmailField("邮箱", blank=True)
     body = models.TextField("内容", max_length=5000)
     is_approved = models.BooleanField("已审核", default=False)
     ip_address = models.GenericIPAddressField("IP 地址", null=True, blank=True)
