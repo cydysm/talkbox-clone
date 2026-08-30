@@ -111,6 +111,42 @@ class MarkdownSourceSetting(models.Model):
         return setting.is_enabled if setting else True
 
 
+class SiteAbout(models.Model):
+    MAX_LENGTH = 200
+
+    text = models.CharField(
+        "简介内容",
+        max_length=MAX_LENGTH,
+        blank=True,
+        help_text=f"显示在主页顶部，最长 {MAX_LENGTH} 字；留空时使用站点描述。",
+    )
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "主页简介"
+        verbose_name_plural = verbose_name
+
+    def __str__(self) -> str:
+        return self.text or "（使用站点描述）"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            existing = SiteAbout.objects.first()
+            if existing:
+                self.pk = existing.pk
+                existing.text = self.text
+                existing.save()
+                return
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def current_text(cls) -> str:
+        setting = cls.objects.first()
+        if setting and setting.text:
+            return setting.text
+        return settings.SITE_DESCRIPTION
+
+
 class ShareTarget(models.Model):
     name = models.SlugField("目标", max_length=50, unique=True)
     order = models.PositiveSmallIntegerField("排序", default=0)

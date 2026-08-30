@@ -13,6 +13,7 @@ from .models import (
     PluginSetting,
     Post,
     ShareTarget,
+    SiteAbout,
     ThemeSetting,
 )
 
@@ -157,3 +158,14 @@ class MarkdownSourceSettingAdmin(admin.ModelAdmin):
 class ShareTargetAdmin(admin.ModelAdmin):
     list_display = ["label", "name", "order", "is_visible"]
     list_editable = ["order", "is_visible"]
+
+
+@admin.register(SiteAbout)
+class SiteAboutAdmin(admin.ModelAdmin):
+    list_display = ["text", "updated_at"]
+
+    def has_add_permission(self, request):
+        return not SiteAbout.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
