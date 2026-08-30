@@ -1114,6 +1114,13 @@ article .content h2:before {
   font-weight: bold;
   font-size: 1.2rem;
 }
+@media (max-width: 600px) {
+  article .content h2:before {
+    position: static;
+    display: inline;
+    margin-right: 0.3rem;
+  }
+}
 article .content img,
 article .content video {
   display: block;
