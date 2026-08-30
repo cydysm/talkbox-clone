@@ -2219,6 +2219,45 @@ article.page .page-header .meta * {
 }
 
 /* ---------------------------------------------------------------
+   移动端搜索框美化：药丸造型 + 内置放大镜 + 聚焦主题色柔光。
+   --------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .search-form {
+    position: relative;
+  }
+  .search-form::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0.8rem;
+    width: 0.85rem;
+    height: 0.85rem;
+    transform: translateY(-50%);
+    background: var(--meta);
+    pointer-events: none;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Ccircle cx=%277%27 cy=%277%27 r=%274.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.8%27/%3E%3Cpath d=%27M10.5 10.5L14 14%27 stroke=%27black%27 stroke-width=%271.8%27 stroke-linecap=%27round%27/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Ccircle cx=%277%27 cy=%277%27 r=%274.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.8%27/%3E%3Cpath d=%27M10.5 10.5L14 14%27 stroke=%27black%27 stroke-width=%271.8%27 stroke-linecap=%27round%27/%3E%3C/svg%3E") no-repeat center / contain;
+  }
+  .search-form .search-input {
+    padding: 0.45rem 0.9rem 0.45rem 2.1rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background-color: color-mix(in srgb, var(--meta) 8%, var(--background));
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .search-form .search-input::placeholder {
+    color: var(--meta);
+  }
+  .search-form .search-input:focus,
+  .search-form .search-input:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    background-color: var(--background);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+}
+
+/* ---------------------------------------------------------------
    消息提示：右侧倒计时徽标（10 秒自动消失）。
    --------------------------------------------------------------- */
 .message {

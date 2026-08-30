@@ -5,7 +5,7 @@
   {% if not page_title %}
     <div class="utility-row">
       <form action="{% url 'blog:search' %}" method="get" class="search-form">
-        <input type="search" name="q" value="{{ request.GET.q }}" class="search-input" placeholder="搜索文章" aria-label="搜索文章">
+        <input type="search" name="q" value="{{ request.GET.q }}" class="search-input" autocomplete="off" placeholder="搜索文章" aria-label="搜索文章">
       </form>
     </div>
   {% endif %}
