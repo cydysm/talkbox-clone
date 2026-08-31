@@ -79,3 +79,20 @@
   display: block;
   font-size: 0.85em;
 }
+
+.talkbox-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.talkbox-groups .module h2 {
+  font-weight: 600;
+}
+
+.talkbox-groups td.help {
+  color: var(--body-quiet-color, #666);
+  font-size: 11px;
+  white-space: nowrap;
+}

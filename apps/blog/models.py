@@ -84,33 +84,6 @@ class ThemeSetting(models.Model):
         return setting
 
 
-class MarkdownSourceSetting(models.Model):
-    is_enabled = models.BooleanField("显示原文按钮", default=True)
-    updated_at = models.DateTimeField("更新时间", auto_now=True)
-
-    class Meta:
-        verbose_name = "Markdown 原文视图"
-        verbose_name_plural = verbose_name
-
-    def __str__(self) -> str:
-        return f"Markdown 原文视图（{'启用' if self.is_enabled else '停用'}）"
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            existing = MarkdownSourceSetting.objects.first()
-            if existing:
-                existing.is_enabled = self.is_enabled
-                existing.save()
-                self.pk = existing.pk
-                return
-        super().save(*args, **kwargs)
-
-    @classmethod
-    def enabled(cls) -> bool:
-        setting = cls.objects.first()
-        return setting.is_enabled if setting else True
-
-
 class SiteMeta(models.Model):
     name = models.CharField(
         "站点名称（显示）",
@@ -129,6 +102,11 @@ class SiteMeta(models.Model):
         max_length=300,
         blank=True,
         help_text="meta description；留空时使用 SITE_DESCRIPTION。",
+    )
+    show_markdown_source = models.BooleanField(
+        "显示原文按钮",
+        default=True,
+        help_text="文章页是否提供“查看 Markdown 原文”入口。",
     )
     about = models.CharField(
         "主页简介",
@@ -160,6 +138,7 @@ class SiteMeta(models.Model):
                 existing.name = self.name
                 existing.title = self.title
                 existing.description = self.description
+                existing.show_markdown_source = self.show_markdown_source
                 existing.about = self.about
                 if self.favicon:
                     existing.favicon = self.favicon
@@ -173,6 +152,11 @@ class SiteMeta(models.Model):
         if setting and setting.about:
             return setting.about
         return settings.SITE_DESCRIPTION
+
+    @classmethod
+    def current_show_markdown_source(cls) -> bool:
+        setting = cls.objects.first()
+        return setting.show_markdown_source if setting else True
 
     @classmethod
     def current_name(cls) -> str:

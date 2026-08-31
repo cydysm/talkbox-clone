@@ -6,7 +6,6 @@ from apps.comments.models import Comment
 
 from .models import (
     Category,
-    MarkdownSourceSetting,
     NavItem,
     Page,
     PluginSetting,
@@ -54,6 +53,7 @@ class SiteMetaAdmin(admin.ModelAdmin):
         ("站点名称", {"fields": ["name"]}),
         ("网页标题与描述", {"fields": ["title", "description"]}),
         ("主页简介", {"fields": ["about"]}),
+        ("显示开关", {"fields": ["show_markdown_source"]}),
         ("Favicon", {"fields": ["favicon"]}),
     ]
 
@@ -158,14 +158,9 @@ class PluginSettingAdmin(admin.ModelAdmin):
     list_display = ["name", "is_enabled", "updated_at"]
     list_editable = ["is_enabled"]
 
-
-@admin.register(MarkdownSourceSetting)
-class MarkdownSourceSettingAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "is_enabled", "updated_at"]
-    list_editable = ["is_enabled"]
-
     def has_add_permission(self, request):
-        return not MarkdownSourceSetting.objects.exists()
+        # 插件行由系统注册表生成，禁止手工新增/删除，避免误删导致插件被静默禁用
+        return False
 
     def has_delete_permission(self, request, obj=None):
         return False

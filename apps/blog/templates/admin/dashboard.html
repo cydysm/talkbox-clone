@@ -1,4 +1,9 @@
+{% load static %}
 {% extends "admin/index.html" %}
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/markdown_editor.css' %}">
+{% endblock %}
 {% block content %}
 <div class="talkbox-stats">
   <div class="stat-card">
@@ -31,5 +36,38 @@
 </ul>
 {% endif %}
 
-{{ block.super }}
+<div class="talkbox-groups">
+  <div class="app-module module">
+    <h2>内容管理</h2>
+    <table>
+      <tbody>
+        {% if perms.blog.view_post %}<tr><th scope="row"><a href="{% url 'admin:blog_post_changelist' %}">文章</a></th><td></td></tr>{% endif %}
+        {% if perms.blog.view_page %}<tr><th scope="row"><a href="{% url 'admin:blog_page_changelist' %}">独立页面</a></th><td></td></tr>{% endif %}
+        {% if perms.blog.view_category %}<tr><th scope="row"><a href="{% url 'admin:blog_category_changelist' %}">分类</a></th><td></td></tr>{% endif %}
+        {% if perms.taggit.view_tag %}<tr><th scope="row"><a href="{% url 'admin:taggit_tag_changelist' %}">标签</a></th><td></td></tr>{% endif %}
+        {% if perms.mediafiles.view_uploadedimage %}<tr><th scope="row"><a href="{% url 'admin:mediafiles_uploadedimage_changelist' %}">图片库</a></th><td></td></tr>{% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="app-module module">
+    <h2>站点配置</h2>
+    <table>
+      <tbody>
+        {% if perms.blog.view_sitemeta %}<tr><th scope="row"><a href="{% url 'admin:blog_sitemeta_changelist' %}">站点设置</a></th><td class="help">名称 / 标题 / 描述 / 简介 / Favicon</td></tr>{% endif %}
+        {% if perms.blog.view_navitem %}<tr><th scope="row"><a href="{% url 'admin:blog_navitem_changelist' %}">导航链接</a></th><td class="help">顶部与页脚导航</td></tr>{% endif %}
+        {% if perms.blog.view_sharetarget %}<tr><th scope="row"><a href="{% url 'admin:blog_sharetarget_changelist' %}">分享目标</a></th><td class="help">分享按钮平台与排序</td></tr>{% endif %}
+        {% if perms.blog.view_themesetting %}<tr><th scope="row"><a href="{% url 'admin:blog_themesetting_changelist' %}">主题设置</a></th><td class="help">深色 / 浅色主题启用</td></tr>{% endif %}
+        {% if perms.blog.view_pluginsetting %}<tr><th scope="row"><a href="{% url 'admin:blog_pluginsetting_changelist' %}">插件设置</a></th><td class="help">Markdown 扩展开关</td></tr>{% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="app-module module">
+    <h2>互动管理</h2>
+    <table>
+      <tbody>
+        {% if perms.comments.view_comment %}<tr><th scope="row"><a href="{% url 'admin:comments_comment_changelist' %}">评论</a></th><td class="help">审核与回复</td></tr>{% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}
