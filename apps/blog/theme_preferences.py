@@ -50,7 +50,7 @@ def get_post_header_nav_items(nav_items):
     return [item for item in nav_items if getattr(item, "show_in_post_header", True)]
 
 
-def get_site_meta_context():
+def get_site_meta_context(request):
     meta = SiteMeta.objects.first()
     favicon_url = ""
     if meta and meta.favicon:
@@ -58,6 +58,9 @@ def get_site_meta_context():
             favicon_url = meta.favicon.url
         except ValueError:
             favicon_url = ""
+    if not favicon_url:
+        # 未上传 favicon 时，回退到主题自带的仙人掌 logo
+        favicon_url = f"/static/themes/{get_resolved_theme_name(request)}/img/logo.png"
     return {
         "SITE_NAME": SiteMeta.current_name(),
         "SITE_TITLE": SiteMeta.current_title(),
@@ -78,7 +81,7 @@ def theme_context(request):
         "SYSTEM_THEME": SYSTEM_THEME,
         "AVAILABLE_THEMES": settings.AVAILABLE_THEMES,
         "SITE_DESCRIPTION": settings.SITE_DESCRIPTION,
-        **get_site_meta_context(),
+        **get_site_meta_context(request),
         "NAV_ITEMS": nav_items,
         "POST_NAV_ITEMS": get_post_header_nav_items(nav_items),
         "ABOUT_TEXT": SiteMeta.current_about(),

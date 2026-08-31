@@ -141,7 +141,7 @@ class SiteMeta(models.Model):
         upload_to="site/",
         blank=True,
         null=True,
-        help_text="建议 32×32 或 48×48 的 PNG/ICO；留空时不输出 favicon 链接。",
+        help_text="建议 32×32 或 48×48 的 PNG/ICO；留空时使用主题默认的仙人掌 logo。",
     )
     updated_at = models.DateTimeField("更新时间", auto_now=True)
 
