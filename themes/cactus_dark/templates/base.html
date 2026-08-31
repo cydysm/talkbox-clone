@@ -4,8 +4,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
-    <meta name="description" content="{% block description %}{{ SITE_NAME }} - Python blog{% endblock %}">
+    <title>{% block title %}{{ SITE_TITLE }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ META_DESCRIPTION }}{% endblock %}">
     {% block canonical %}{% endblock %}
     {% if THEME_PREFERENCE == 'system' %}
       <link rel="stylesheet" href="/static/themes/cactus_dark/css/main.css" media="(prefers-color-scheme: dark)">
@@ -13,6 +13,7 @@
     {% else %}
       <link rel="stylesheet" href="/static/themes/{{ THEME_NAME }}/css/main.css">
     {% endif %}
+    {% if FAVICON_URL %}<link rel="icon" href="{{ FAVICON_URL }}">{% endif %}
     <link rel="alternate" type="application/rss+xml" title="{{ SITE_NAME }} RSS" href="{% url 'rss' %}">
     <link rel="alternate" type="application/atom+xml" title="{{ SITE_NAME }} Atom" href="{% url 'atom' %}">
   </head>

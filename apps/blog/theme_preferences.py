@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from .models import MarkdownSourceSetting, NavItem, SiteAbout, default_theme
+from .models import MarkdownSourceSetting, NavItem, SiteAbout, SiteMeta, default_theme
 
 THEME_COOKIE_NAME = "visitor_theme"
 SYSTEM_THEME = "system"
@@ -50,6 +50,22 @@ def get_post_header_nav_items(nav_items):
     return [item for item in nav_items if getattr(item, "show_in_post_header", True)]
 
 
+def get_site_meta_context():
+    meta = SiteMeta.objects.first()
+    favicon_url = ""
+    if meta and meta.favicon:
+        try:
+            favicon_url = meta.favicon.url
+        except ValueError:
+            favicon_url = ""
+    return {
+        "SITE_NAME": SiteMeta.current_name(),
+        "SITE_TITLE": SiteMeta.current_title(),
+        "META_DESCRIPTION": SiteMeta.current_description(),
+        "FAVICON_URL": favicon_url,
+    }
+
+
 def theme_context(request):
     theme_name = get_resolved_theme_name(request)
     preference = get_theme_preference(request)
@@ -61,8 +77,8 @@ def theme_context(request):
         "THEME_SWITCH_MODE": get_switch_mode(request),
         "SYSTEM_THEME": SYSTEM_THEME,
         "AVAILABLE_THEMES": settings.AVAILABLE_THEMES,
-        "SITE_NAME": settings.SITE_NAME,
         "SITE_DESCRIPTION": settings.SITE_DESCRIPTION,
+        **get_site_meta_context(),
         "NAV_ITEMS": nav_items,
         "POST_NAV_ITEMS": get_post_header_nav_items(nav_items),
         "ABOUT_TEXT": SiteAbout.current_text(),

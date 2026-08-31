@@ -2,13 +2,17 @@ from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
 
-from .models import Post
+from .models import Post, SiteMeta
 
 
 class BasePostFeed(Feed):
-    title = settings.SITE_NAME
-    description = settings.SITE_DESCRIPTION
     link = "/"
+
+    def title(self):
+        return SiteMeta.current_title()
+
+    def description(self):
+        return SiteMeta.current_description()
 
     def items(self):
         return Post.objects.filter(status="published").order_by(

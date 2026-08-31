@@ -2,7 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve as media_serve
 
 from apps.blog.feeds import PostAtomFeed, PostRSSFeed
 from apps.blog.sitemaps import PostSitemap
@@ -28,6 +29,8 @@ urlpatterns = [
     path("rss.xml", PostRSSFeed(), name="rss"),
     path("atom.xml", PostAtomFeed(), name="atom"),
     path("healthz/", healthz, name="healthz"),
+    # DEBUG=false 时 static() 助手不生效，显式提供 media 服务（本部署为单机自托管）
+    re_path(r"^media/(?P<path>.*)$", media_serve, {"document_root": settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler404 = "config.urls.custom_404"

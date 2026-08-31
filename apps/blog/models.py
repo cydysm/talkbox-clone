@@ -147,6 +147,62 @@ class SiteAbout(models.Model):
         return settings.SITE_DESCRIPTION
 
 
+class SiteMeta(models.Model):
+    title = models.CharField(
+        "网页标题",
+        max_length=100,
+        blank=True,
+        help_text="浏览器标签页与 RSS 标题；留空时使用站点名称（SITE_NAME）。",
+    )
+    description = models.TextField(
+        "站点描述（meta）",
+        max_length=300,
+        blank=True,
+        help_text="meta description；留空时使用 SITE_DESCRIPTION。",
+    )
+    favicon = models.ImageField(
+        "Favicon",
+        upload_to="site/",
+        blank=True,
+        null=True,
+        help_text="建议 32×32 或 48×48 的 PNG/ICO；留空时不输出 favicon 链接。",
+    )
+    updated_at = models.DateTimeField("更新时间", auto_now=True)
+
+    class Meta:
+        verbose_name = "站点元信息"
+        verbose_name_plural = verbose_name
+
+    def __str__(self) -> str:
+        return self.title or "（使用默认标题）"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            existing = SiteMeta.objects.first()
+            if existing:
+                existing.title = self.title
+                existing.description = self.description
+                if self.favicon:
+                    existing.favicon = self.favicon
+                existing.save()
+                return
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def current_title(cls) -> str:
+        setting = cls.objects.first()
+        if setting and setting.title:
+            return setting.title
+        return settings.SITE_NAME
+
+    @classmethod
+    def current_description(cls) -> str:
+        setting = cls.objects.first()
+        if setting and setting.description:
+            return setting.description
+        return settings.SITE_DESCRIPTION
+
+
 class ShareTarget(models.Model):
     name = models.SlugField("目标", max_length=50, unique=True)
     order = models.PositiveSmallIntegerField("排序", default=0)

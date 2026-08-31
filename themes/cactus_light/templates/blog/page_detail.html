@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}{{ page.title }} | {{ SITE_NAME }}{% endblock %}
-{% block description %}{{ SITE_NAME }} - {{ page.title }}{% endblock %}
+{% block title %}{{ page.title }} | {{ SITE_TITLE }}{% endblock %}
+{% block description %}{{ META_DESCRIPTION }}{% endblock %}
 {% block canonical %}<link rel="canonical" href="{{ request.build_absolute_uri }}">{% endblock %}
 {% block content %}
   <article class="page">

@@ -13,6 +13,7 @@ from .models import (
     Post,
     ShareTarget,
     SiteAbout,
+    SiteMeta,
     ThemeSetting,
 )
 
@@ -45,6 +46,22 @@ def dashboard_index(request, extra_context=None):
 
 admin.site.index = dashboard_index
 admin.site.index_template = "admin/dashboard.html"
+
+
+@admin.register(SiteMeta)
+class SiteMetaAdmin(admin.ModelAdmin):
+    list_display = ["title", "updated_at"]
+    fieldsets = [
+        ("网页标题与描述", {"fields": ["title", "description"]}),
+        ("Favicon", {"fields": ["favicon"]}),
+    ]
+
+    def has_add_permission(self, request):
+        # 单例语义：已有记录时不再提供"新增"
+        return not SiteMeta.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Category)

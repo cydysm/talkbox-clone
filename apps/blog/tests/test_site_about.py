@@ -25,7 +25,8 @@ class SiteAboutTests(TestCase):
         SiteAbout.objects.create(text="这里记录我的技术笔记与生活随笔。")
         response = self.client.get(reverse("blog:post-list"))
         self.assertContains(response, "这里记录我的技术笔记与生活随笔。")
-        self.assertNotContains(response, "Talkbox Clone - Python blog")
+        # 默认站点描述不应再出现在主页简介区（meta description 的回退不算）
+        self.assertNotContains(response, '<section id="about"><p>Talkbox Clone - Python blog</p>')
 
     def test_text_is_capped(self):
         setting = SiteAbout(text="超" * 201)
