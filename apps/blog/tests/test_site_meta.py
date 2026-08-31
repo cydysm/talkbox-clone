@@ -44,3 +44,16 @@ class SiteMetaAboutTests(TestCase):
         self.assertEqual(SiteMeta.objects.count(), 1)
         self.assertEqual(SiteMeta.objects.first().about, "第二版")
         self.assertEqual(second.pk, SiteMeta.objects.first().pk)
+
+
+class AdminDashboardTests(TestCase):
+    def test_dashboard_renders_for_staff(self):
+        staff = get_user_model().objects.create_user(
+            "dash-viewer", password="test-password", is_staff=True, is_superuser=True
+        )
+        self.client.force_login(staff)
+        response = self.client.get(reverse("admin:index"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "内容管理")
+        self.assertContains(response, "站点配置")
+        self.assertContains(response, "互动管理")
