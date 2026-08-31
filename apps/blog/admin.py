@@ -50,8 +50,9 @@ admin.site.index_template = "admin/dashboard.html"
 
 @admin.register(SiteMeta)
 class SiteMetaAdmin(admin.ModelAdmin):
-    list_display = ["title", "updated_at"]
+    list_display = ["name", "title", "updated_at"]
     fieldsets = [
+        ("站点名称", {"fields": ["name"]}),
         ("网页标题与描述", {"fields": ["title", "description"]}),
         ("Favicon", {"fields": ["favicon"]}),
     ]

@@ -148,6 +148,12 @@ class SiteAbout(models.Model):
 
 
 class SiteMeta(models.Model):
+    name = models.CharField(
+        "站点名称（显示）",
+        max_length=100,
+        blank=True,
+        help_text="页面顶部大标题、页脚版权与 RSS 链接名称；留空时使用站点名称（SITE_NAME）。",
+    )
     title = models.CharField(
         "网页标题",
         max_length=100,
@@ -174,12 +180,13 @@ class SiteMeta(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
-        return self.title or "（使用默认标题）"
+        return self.name or self.title or "（使用默认标题）"
 
     def save(self, *args, **kwargs):
         if not self.pk:
             existing = SiteMeta.objects.first()
             if existing:
+                existing.name = self.name
                 existing.title = self.title
                 existing.description = self.description
                 if self.favicon:
@@ -187,6 +194,13 @@ class SiteMeta(models.Model):
                 existing.save()
                 return
         super().save(*args, **kwargs)
+
+    @classmethod
+    def current_name(cls) -> str:
+        setting = cls.objects.first()
+        if setting and setting.name:
+            return setting.name
+        return settings.SITE_NAME
 
     @classmethod
     def current_title(cls) -> str:
