@@ -111,42 +111,6 @@ class MarkdownSourceSetting(models.Model):
         return setting.is_enabled if setting else True
 
 
-class SiteAbout(models.Model):
-    MAX_LENGTH = 200
-
-    text = models.CharField(
-        "简介内容",
-        max_length=MAX_LENGTH,
-        blank=True,
-        help_text=f"显示在主页顶部，最长 {MAX_LENGTH} 字；留空时使用站点描述。",
-    )
-    updated_at = models.DateTimeField("更新时间", auto_now=True)
-
-    class Meta:
-        verbose_name = "主页简介"
-        verbose_name_plural = verbose_name
-
-    def __str__(self) -> str:
-        return self.text or "（使用站点描述）"
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            existing = SiteAbout.objects.first()
-            if existing:
-                self.pk = existing.pk
-                existing.text = self.text
-                existing.save()
-                return
-        super().save(*args, **kwargs)
-
-    @classmethod
-    def current_text(cls) -> str:
-        setting = cls.objects.first()
-        if setting and setting.text:
-            return setting.text
-        return settings.SITE_DESCRIPTION
-
-
 class SiteMeta(models.Model):
     name = models.CharField(
         "站点名称（显示）",
@@ -166,6 +130,12 @@ class SiteMeta(models.Model):
         blank=True,
         help_text="meta description；留空时使用 SITE_DESCRIPTION。",
     )
+    about = models.CharField(
+        "主页简介",
+        max_length=200,
+        blank=True,
+        help_text="显示在主页顶部，最长 200 字；留空时使用站点描述。",
+    )
     favicon = models.ImageField(
         "Favicon",
         upload_to="site/",
@@ -176,7 +146,7 @@ class SiteMeta(models.Model):
     updated_at = models.DateTimeField("更新时间", auto_now=True)
 
     class Meta:
-        verbose_name = "站点元信息"
+        verbose_name = "站点设置"
         verbose_name_plural = verbose_name
 
     def __str__(self) -> str:
@@ -186,14 +156,23 @@ class SiteMeta(models.Model):
         if not self.pk:
             existing = SiteMeta.objects.first()
             if existing:
+                self.pk = existing.pk
                 existing.name = self.name
                 existing.title = self.title
                 existing.description = self.description
+                existing.about = self.about
                 if self.favicon:
                     existing.favicon = self.favicon
                 existing.save()
                 return
         super().save(*args, **kwargs)
+
+    @classmethod
+    def current_about(cls) -> str:
+        setting = cls.objects.first()
+        if setting and setting.about:
+            return setting.about
+        return settings.SITE_DESCRIPTION
 
     @classmethod
     def current_name(cls) -> str:

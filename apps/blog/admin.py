@@ -12,7 +12,6 @@ from .models import (
     PluginSetting,
     Post,
     ShareTarget,
-    SiteAbout,
     SiteMeta,
     ThemeSetting,
 )
@@ -54,6 +53,7 @@ class SiteMetaAdmin(admin.ModelAdmin):
     fieldsets = [
         ("站点名称", {"fields": ["name"]}),
         ("网页标题与描述", {"fields": ["title", "description"]}),
+        ("主页简介", {"fields": ["about"]}),
         ("Favicon", {"fields": ["favicon"]}),
     ]
 
@@ -175,14 +175,3 @@ class MarkdownSourceSettingAdmin(admin.ModelAdmin):
 class ShareTargetAdmin(admin.ModelAdmin):
     list_display = ["label", "name", "order", "is_visible"]
     list_editable = ["order", "is_visible"]
-
-
-@admin.register(SiteAbout)
-class SiteAboutAdmin(admin.ModelAdmin):
-    list_display = ["text", "updated_at"]
-
-    def has_add_permission(self, request):
-        return not SiteAbout.objects.exists()
-
-    def has_delete_permission(self, request, obj=None):
-        return False
