@@ -14,7 +14,7 @@ def validate_production_security(secret_key, allowed_hosts):
         raise ImproperlyConfigured("ALLOWED_HOSTS 必须显式配置，不能为空或使用通配符。")
 
 
-if len(sys.argv) < 2 or sys.argv[1] != "test":
+if "test" not in sys.argv:
     validate_production_security(SECRET_KEY, ALLOWED_HOSTS)
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

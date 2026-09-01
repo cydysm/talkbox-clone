@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import environ
@@ -90,6 +91,7 @@ DATABASES = {"default": env.db_url("DATABASE_URL")}
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
 
 AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -123,7 +125,6 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 THEME = env("THEME")
 PLUGIN_DIRS = [BASE_DIR / "plugins"]
-import sys
 
 for _plugin_dir in PLUGIN_DIRS:
     if str(_plugin_dir) not in sys.path:
@@ -149,6 +150,9 @@ COMMENT_REPLY_NOTIFY = env.bool("COMMENT_REPLY_NOTIFY", default=True)
 COMMENT_INTERVAL_SECONDS = env.int("COMMENT_INTERVAL_SECONDS", default=30)
 WATERMARK_TEXT = env("WATERMARK_TEXT", default="")
 WATERMARK_IMAGE_PATH = env("WATERMARK_IMAGE_PATH", default="")
+WATERMARK_FONT_PATH = env("WATERMARK_FONT_PATH", default="")
+# 部署在可信反代之后且反代会覆盖 X-Forwarded-For 时打开，限流/记录用真实客户端 IP
+USE_X_FORWARDED_FOR = env.bool("USE_X_FORWARDED_FOR", default=False)
 UPLOAD_MAX_BYTES = env.int("UPLOAD_MAX_MB", default=10) * 1024 * 1024
 UPLOAD_MAX_IMAGES = env.int("UPLOAD_MAX_IMAGES", default=20)
 UPLOAD_TOTAL_LIMIT_GB = env.int("UPLOAD_TOTAL_LIMIT_GB", default=20)

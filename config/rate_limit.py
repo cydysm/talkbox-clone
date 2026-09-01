@@ -2,6 +2,8 @@ from django.contrib.auth import views as auth_views
 from django.core.cache import cache
 from django.http import HttpResponseForbidden
 
+from config.request_utils import get_client_ip
+
 LOGIN_RATE_LIMIT = 5
 LOGIN_RATE_WINDOW = 300
 
@@ -15,7 +17,7 @@ class RateLimitedLoginView(auth_views.LoginView):
         return "/control-panel/"
 
     def dispatch(self, request, *args, **kwargs):
-        client_ip = request.META.get("REMOTE_ADDR") or "unknown"
+        client_ip = get_client_ip(request)
         key = f"login-fail:{client_ip}"
 
         if request.method == "POST":

@@ -18,3 +18,14 @@ class CommentForm(forms.ModelForm):
         if value:
             raise forms.ValidationError("评论提交被拒绝。")
         return value
+
+    def clean(self):
+        cleaned_data = super().clean()
+        parent = cleaned_data.get("parent")
+        post = cleaned_data.get("post")
+        if parent and post:
+            if parent.post_id != post.pk:
+                self.add_error("parent", "回复目标不属于这篇文章。")
+            elif not parent.is_approved:
+                self.add_error("parent", "回复目标尚未通过审核。")
+        return cleaned_data
