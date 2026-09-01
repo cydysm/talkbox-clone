@@ -1,0 +1,28 @@
+# 构建上下文只保留运行所需内容： secrets、本地数据与缓存一律不进镜像
+.git
+.github
+.venv
+venv
+.env
+.env.*
+!.env.example
+.DS_Store
+**/__pycache__
+**/*.py[cod]
+.ruff_cache
+.pytest_cache
+.mypy_cache
+
+# 本地数据与构建产物（容器内由卷和 start.sh 重新生成）
+*.sqlite3
+*.db
+logs/
+media/*
+!media/.gitkeep
+staticfiles/
+
+# 仅本地使用的文档与编排文件
+docs/
+README.md
+ADMIN_AUDIT_HANDOFF.md
+docker-compose.yml

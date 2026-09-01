@@ -17,8 +17,8 @@ RUN pip install --upgrade pip && pip install -r /tmp/requirements/base.txt
 COPY . .
 
 RUN addgroup --system talkbox && adduser --system --ingroup talkbox talkbox \
- && mkdir -p /app/media /app/staticfiles \
- && chown -R talkbox:talkbox /app/media /app/staticfiles
+ && mkdir -p /app/media /app/staticfiles /app/logs \
+ && chown -R talkbox:talkbox /app/media /app/staticfiles /app/logs
 USER talkbox
 
 EXPOSE 8000
