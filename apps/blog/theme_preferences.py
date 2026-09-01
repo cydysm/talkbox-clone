@@ -12,24 +12,24 @@ def get_theme_preference(request):
     return preference if preference in THEME_PREFERENCES else None
 
 
-def get_resolved_theme_name(request):
+def get_resolved_theme_name(request, active_theme=None):
     preference = get_theme_preference(request)
-    available = set(settings.AVAILABLE_THEMES)
-    matching_themes = [theme for theme in available if theme.endswith(f"_{preference}")]
-    if preference in {"dark", "light"} and matching_themes:
-        return matching_themes[0]
-    return default_theme()
+    if preference in {"dark", "light"}:
+        matching_themes = [t for t in settings.AVAILABLE_THEMES if t.endswith(f"_{preference}")]
+        if matching_themes:
+            return matching_themes[0]
+    return active_theme or default_theme()
 
 
-def get_switch_mode(request):
+def get_switch_mode(request, active_theme=None):
     preference = get_theme_preference(request)
     if preference == SYSTEM_THEME:
         return "auto"
     if preference:
         return preference
 
-    default_theme_name = default_theme()
-    if default_theme_name.endswith("_light"):
+    theme = active_theme or default_theme()
+    if theme.endswith("_light"):
         return "light"
     return "dark"
 
@@ -50,8 +50,9 @@ def get_post_header_nav_items(nav_items):
     return [item for item in nav_items if getattr(item, "show_in_post_header", True)]
 
 
-def get_site_meta_context(request):
-    meta = SiteMeta.objects.first()
+def get_site_meta_context(request, meta=None, active_theme=None):
+    if meta is None:
+        meta = SiteMeta.objects.first()
     favicon_url = ""
     if meta and meta.favicon:
         try:
@@ -60,30 +61,34 @@ def get_site_meta_context(request):
             favicon_url = ""
     if not favicon_url:
         # 未上传 favicon 时，回退到主题自带的仙人掌 logo
-        favicon_url = f"/static/themes/{get_resolved_theme_name(request)}/img/logo.png"
+        theme_name = active_theme or get_resolved_theme_name(request)
+        favicon_url = f"/static/themes/{theme_name}/img/logo.png"
     return {
-        "SITE_NAME": SiteMeta.current_name(),
-        "SITE_TITLE": SiteMeta.current_title(),
-        "META_DESCRIPTION": SiteMeta.current_description(),
+        "SITE_NAME": SiteMeta.current_name(meta),
+        "SITE_TITLE": SiteMeta.current_title(meta),
+        "META_DESCRIPTION": SiteMeta.current_description(meta),
         "FAVICON_URL": favicon_url,
     }
 
 
 def theme_context(request):
-    theme_name = get_resolved_theme_name(request)
+    # 每个请求只查一次主题与站点设置行，向下传递复用
+    active_theme = default_theme()
+    meta = SiteMeta.objects.first()
     preference = get_theme_preference(request)
+    theme_name = get_resolved_theme_name(request, active_theme)
     nav_items = get_nav_items(request)
     return {
         "THEME_NAME": theme_name,
         "THEME_STATIC_DIR": f"themes/{theme_name}",
         "THEME_PREFERENCE": preference,
-        "THEME_SWITCH_MODE": get_switch_mode(request),
+        "THEME_SWITCH_MODE": get_switch_mode(request, active_theme),
         "SYSTEM_THEME": SYSTEM_THEME,
         "AVAILABLE_THEMES": settings.AVAILABLE_THEMES,
         "SITE_DESCRIPTION": settings.SITE_DESCRIPTION,
-        **get_site_meta_context(request),
+        **get_site_meta_context(request, meta, theme_name),
         "NAV_ITEMS": nav_items,
         "POST_NAV_ITEMS": get_post_header_nav_items(nav_items),
-        "ABOUT_TEXT": SiteMeta.current_about(),
-        "MARKDOWN_SOURCE_ENABLED": SiteMeta.current_show_markdown_source(),
+        "ABOUT_TEXT": SiteMeta.current_about(meta),
+        "MARKDOWN_SOURCE_ENABLED": SiteMeta.current_show_markdown_source(meta),
     }
