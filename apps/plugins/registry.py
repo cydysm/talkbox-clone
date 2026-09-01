@@ -1,3 +1,4 @@
+import hashlib
 import importlib.metadata
 import json
 from dataclasses import dataclass, field
@@ -86,11 +87,21 @@ class PluginRegistry:
     def available(self) -> list[Plugin]:
         return list(self._plugins.values())
 
-    def enabled(self):
-        enabled_names = set(
+    def enabled_names(self) -> set[str]:
+        return set(
             PluginSetting.objects.filter(is_enabled=True).values_list("name", flat=True)
         )
+
+    def enabled(self):
+        enabled_names = self.enabled_names()
         return [plugin for plugin in self._plugins.values() if plugin.name in enabled_names]
+
+    def signature(self) -> str:
+        """已启用插件集合的指纹，用作渲染缓存 key 的成分，保证插件启停后缓存立即失效。"""
+        if not self._plugins:
+            return "none"
+        names = ",".join(sorted(self.enabled_names()))
+        return hashlib.md5(names.encode()).hexdigest()[:10]
 
     def apply_hook(self, hook_name: str, value: str) -> str:
         for plugin in self.enabled():

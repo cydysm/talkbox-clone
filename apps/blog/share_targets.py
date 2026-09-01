@@ -49,11 +49,15 @@ def prepare_share_targets(request, post, rows):
         spec = SHARE_TARGETS.get(name)
         if not spec:
             continue
+        icon = ICONS.get(name)
+        if not icon:
+            # 注册表与图标由人工同步维护，缺图标的条目直接跳过，避免渲染出空白按钮
+            continue
         target = {
             "name": name,
             "label": spec["label"],
             "kind": spec["kind"],
-            "icon": ICONS[name],
+            "icon": icon,
         }
         if spec["kind"] == "copy":
             target["message"] = spec.get("message", "链接已复制到剪贴板。")

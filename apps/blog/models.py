@@ -131,50 +131,44 @@ class SiteMeta(models.Model):
         return self.name or self.title or "（使用默认标题）"
 
     def save(self, *args, **kwargs):
+        # 单例语义：无 pk 时复用已有行的主键，让 save 更新整行而无需逐字段手工复制
         if not self.pk:
-            existing = SiteMeta.objects.first()
-            if existing:
-                self.pk = existing.pk
-                existing.name = self.name
-                existing.title = self.title
-                existing.description = self.description
-                existing.show_markdown_source = self.show_markdown_source
-                existing.about = self.about
-                if self.favicon:
-                    existing.favicon = self.favicon
-                existing.save()
-                return
+            existing_pk = SiteMeta.objects.values_list("pk", flat=True).first()
+            if existing_pk is not None:
+                self.pk = existing_pk
+                # create() 传 force_insert=True，此处实际是更新已有行，必须去掉
+                kwargs.pop("force_insert", None)
         super().save(*args, **kwargs)
 
     @classmethod
-    def current_about(cls) -> str:
-        setting = cls.objects.first()
+    def current_about(cls, setting: "SiteMeta | None" = None) -> str:
+        setting = setting if setting is not None else cls.objects.first()
         if setting and setting.about:
             return setting.about
         return settings.SITE_DESCRIPTION
 
     @classmethod
-    def current_show_markdown_source(cls) -> bool:
-        setting = cls.objects.first()
+    def current_show_markdown_source(cls, setting: "SiteMeta | None" = None) -> bool:
+        setting = setting if setting is not None else cls.objects.first()
         return setting.show_markdown_source if setting else True
 
     @classmethod
-    def current_name(cls) -> str:
-        setting = cls.objects.first()
+    def current_name(cls, setting: "SiteMeta | None" = None) -> str:
+        setting = setting if setting is not None else cls.objects.first()
         if setting and setting.name:
             return setting.name
         return settings.SITE_NAME
 
     @classmethod
-    def current_title(cls) -> str:
-        setting = cls.objects.first()
+    def current_title(cls, setting: "SiteMeta | None" = None) -> str:
+        setting = setting if setting is not None else cls.objects.first()
         if setting and setting.title:
             return setting.title
         return settings.SITE_NAME
 
     @classmethod
-    def current_description(cls) -> str:
-        setting = cls.objects.first()
+    def current_description(cls, setting: "SiteMeta | None" = None) -> str:
+        setting = setting if setting is not None else cls.objects.first()
         if setting and setting.description:
             return setting.description
         return settings.SITE_DESCRIPTION

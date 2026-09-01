@@ -7,6 +7,7 @@ from django.db.models import Count, F
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
+from taggit.models import Tag
 
 from apps.plugins.registry import registry
 
@@ -55,7 +56,8 @@ def post_list_or_legacy_redirect(request):
     posts = (
         Post.objects.filter(status="published")
         .select_related("author", "category")
-        .only("id", "title", "slug", "excerpt", "views", "published_at", "created_at", "updated_at", "author__username", "category__name")
+        # 列表页用不到正文，避免整段 Markdown 进内存
+        .defer("content_markdown")
     )
     return render_paginated(request, posts)
 
@@ -79,12 +81,12 @@ def category_detail(request, slug):
 
 
 def tag_detail(request, tag_id):
-    posts = published_posts().filter(tags__id=tag_id)
-    tag_name = posts.first().tags.all()[0].name if posts else ""
+    tag = get_object_or_404(Tag, pk=tag_id)
+    posts = published_posts().filter(tags=tag)
     return render_paginated(
         request,
         posts,
-        extra_context={"page_title": f"标签：{tag_name}" if tag_name else "标签"},
+        extra_context={"page_title": f"标签：{tag.name}"},
     )
 
 
@@ -92,7 +94,7 @@ def archive(request):
     posts = list(
         Post.objects.filter(status="published")
         .prefetch_related("tags")
-        .only("id", "title", "slug", "published_at")
+        .defer("content_markdown", "excerpt")
         .order_by("-published_at", "-created_at")
     )
     categories = (
@@ -137,13 +139,17 @@ def post_detail(request, slug):
     post = get_object_or_404(Post.objects.select_related("author", "category"), slug=slug)
     if not post.is_accessible_by(request.user):
         raise Http404("文章不存在")
-    if request.method == "GET":
+    viewer_is_author_or_staff = request.user.is_authenticated and (
+        request.user.is_staff or request.user.pk == post.author_id
+    )
+    if request.method == "GET" and post.status == "published" and not viewer_is_author_or_staff:
         Post.objects.filter(pk=post.pk).update(views=F("views") + 1)
-    cache_key = f"blog:html:{post.pk}:{post.updated_at.timestamp():.0f}"
+    cache_key = f"blog:html:{post.pk}:{post.updated_at.timestamp():.0f}:{registry.signature()}"
     rendered_content = cache.get(cache_key)
     if rendered_content is None:
+        content_markdown = registry.apply_hook("transform_markdown", post.content_markdown)
         rendered_content = markdown.markdown(
-            post.content_markdown,
+            content_markdown,
             extensions=["extra", "codehilite"],
             output_format="html5",
         )
@@ -181,11 +187,17 @@ def page_detail(request, slug):
     page = get_object_or_404(Page, slug=slug)
     if page.status != "published" and not request.user.is_staff:
         raise Http404("页面不存在")
-    content_html = markdown.markdown(
-        page.content_markdown,
-        extensions=["extra", "codehilite"],
-        output_format="html5",
-    )
+    cache_key = f"blog:page-html:{page.pk}:{page.updated_at.timestamp():.0f}:{registry.signature()}"
+    content_html = cache.get(cache_key)
+    if content_html is None:
+        content_markdown = registry.apply_hook("transform_markdown", page.content_markdown)
+        content_html = markdown.markdown(
+            content_markdown,
+            extensions=["extra", "codehilite"],
+            output_format="html5",
+        )
+        content_html = registry.apply_hook("transform_html", content_html)
+        cache.set(cache_key, content_html, 3600)
     return render(
         request,
         "blog/page_detail.html",
@@ -199,13 +211,17 @@ def legacy_post_redirect(request, legacy_id):
         f"/{legacy_id}.html",
         f"/post/{legacy_id}",
         f"/{legacy_id}",
+        # Post.legacy_id 对 /post-<id>（无 .html 后缀）的形式也会解析
+        f"/post-{legacy_id}",
     )
     post = Post.objects.filter(status="published").filter(
         legacy_url__in=legacy_paths
     ).first()
     if post is None:
-        posts = [item for item in Post.objects.filter(status="published") if item.legacy_id == legacy_id]
-        post = posts[0] if posts else None
+        post = Post.objects.filter(status="published", slug=f"emlog-post-{legacy_id}").first()
+    if post is None:
+        # 常规文章恰好使用数字 slug 时（如 /post/123 无尾斜杠）跳到规范地址
+        post = Post.objects.filter(status="published", slug=str(legacy_id)).first()
     if post is None:
         raise Http404("旧文章不存在")
     return redirect(post, permanent=True)
