@@ -23,7 +23,12 @@ def get_media_usage_bytes() -> int:
 @require_POST
 def upload_images(request):
     post_id = request.POST.get("post")
-    post = get_object_or_404(Post, pk=post_id) if post_id else None
+    if post_id:
+        if not post_id.isdigit():
+            return JsonResponse({"errors": ["无效的文章 ID。"]}, status=400)
+        post = get_object_or_404(Post, pk=post_id)
+    else:
+        post = None
     uploads = []
     errors = []
     files = request.FILES.getlist("images")
@@ -71,7 +76,7 @@ def upload_images(request):
                         f"{filename}：尺寸不能超过 {settings.IMAGE_MAX_DIMENSION}px。"
                     )
                     continue
-        except (OSError, UnidentifiedImageError):
+        except (OSError, UnidentifiedImageError, Image.DecompressionBombError):
             errors.append(f"{filename}：不是有效的图片文件。")
             continue
         finally:

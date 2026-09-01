@@ -1,9 +1,29 @@
 from io import BytesIO
+from pathlib import Path
 
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models
 from PIL import Image, ImageDraw, ImageFont
+
+# Linux（Docker 镜像）与 macOS 常见的无版权/系统字体路径，依次探测
+_FONT_CANDIDATES = (
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+    "/System/Library/Fonts/Supplemental/Arial.ttf",
+)
+
+
+def _load_watermark_font(size):
+    font_path = getattr(settings, "WATERMARK_FONT_PATH", "")
+    for candidate in (font_path, *_FONT_CANDIDATES):
+        if candidate and Path(candidate).exists():
+            try:
+                return ImageFont.truetype(candidate, size)
+            except OSError:
+                continue
+    return ImageFont.load_default(size)
 
 
 class UploadedImage(models.Model):
@@ -52,7 +72,6 @@ class UploadedImage(models.Model):
 
             if watermarked.mode == "RGBA" or "A" in watermarked.getbands():
                 watermarked = watermarked.convert("RGB")
-                watermarked = watermarked.convert("RGB")
 
             watermarked.save(buffer, format=output_format, quality=80)
             self.thumbnail.save(
@@ -86,10 +105,7 @@ class UploadedImage(models.Model):
             overlay = Image.new("RGBA", marked.size, (0, 0, 0, 0))
             draw = ImageDraw.Draw(overlay)
             font_size = max(14, marked.width // 32)
-            try:
-                font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", font_size)
-            except OSError:
-                font = ImageFont.load_default()
+            font = _load_watermark_font(font_size)
             text_bbox = draw.textbbox((0, 0), watermark_text, font=font)
             text_size = (text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1])
             position = (max(16, marked.width - text_size[0] - 24), max(16, marked.height - text_size[1] - 24))
